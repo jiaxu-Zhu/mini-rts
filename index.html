@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>迷你多人RTS</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="game-container">
+        <!-- 顶部栏 -->
+        <div class="top-bar">
+            <div class="player-info">
+                <span id="playerId">未连接</span>
+                <div class="resources">
+                    <span class="gold">💰 <span id="gold">100</span></span>
+                    <span class="wood">🪵 <span id="wood">100</span></span>
+                </div>
+            </div>
+            <div class="status">
+                <span id="status" class="disconnected">未连接</span>
+                <button id="startBtn" class="btn">开始</button>
+            </div>
+        </div>
+
+        <!-- 游戏区域 -->
+        <div class="game-area">
+            <canvas id="gameCanvas"></canvas>
+        </div>
+
+        <!-- 底部面板 -->
+        <div class="bottom-panel">
+            <div class="buildings">
+                <button class="btn build" data-type="barracks" data-gold="50" data-wood="30">🏚️兵营</button>
+                <button class="btn build" data-type="gold-mine" data-gold="20" data-wood="40">⛏️金矿</button>
+                <button class="btn build" data-type="lumber-camp" data-gold="30" data-wood="20">🪓伐木场</button>
+            </div>
+            <div class="units">
+                <button class="btn train" data-type="soldier" data-gold="50" data-wood="20">⚔️士兵</button>
+                <button class="btn train" data-type="worker" data-gold="25" data-wood="10">👷工人</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 游戏结束弹窗 -->
+    <div id="gameOver" class="modal hidden">
+        <div class="modal-content">
+            <h2 id="gameOverTitle">游戏结束</h2>
+            <p id="gameOverText"></p>
+            <button id="restartBtn" class="btn">再来一局</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>
