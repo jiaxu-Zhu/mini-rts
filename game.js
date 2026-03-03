@@ -303,29 +303,71 @@ class MiniRTS {
 
     setupTouchEvents() {
         let lastTouchTime = 0;
+        let touchStartPos = null;
+        let touchStartTime = 0;
+        let isDragging = false;
+
         this.canvas.addEventListener('touchstart', e => {
             e.preventDefault();
             const touch = e.touches[0];
             const now = Date.now();
+            touchStartPos = { x: touch.clientX, y: touch.clientY };
+            touchStartTime = now;
+
+            // 检测是否为长按（用于右键菜单替代）
+            this.touchLongPressTimer = setTimeout(() => {
+                // 长按显示右键菜单提示
+                this.addFloatingText('长按可移动单位', '#667eea', touch.clientX, touch.clientY);
+            }, 500);
+
+            // 双击检测
             if (now - lastTouchTime < 300) {
-                // 双击
+                clearTimeout(this.touchLongPressTimer);
                 this.onDoubleClick({ clientX: touch.clientX, clientY: touch.clientY });
+                lastTouchTime = 0;
             } else {
                 this.onMouseDown({ clientX: touch.clientX, clientY: touch.clientY });
+                lastTouchTime = now;
             }
-            lastTouchTime = now;
         }, { passive: false });
 
         this.canvas.addEventListener('touchmove', e => {
             e.preventDefault();
             const touch = e.touches[0];
-            this.onMouseMove({ clientX: touch.clientX, clientY: touch.clientY });
+            const dx = touch.clientX - touchStartPos.x;
+            const dy = touch.clientY - touchStartPos.y;
+            const dist = Math.sqrt(dx*dx + dy*dy);
+
+            // 如果移动超过阈值，视为拖拽
+            if (dist > 10) {
+                isDragging = true;
+                clearTimeout(this.touchLongPressTimer);
+                this.onMouseMove({ clientX: touch.clientX, clientY: touch.clientY });
+            }
         }, { passive: false });
 
         this.canvas.addEventListener('touchend', e => {
             e.preventDefault();
-            this.onMouseUp({});
+            clearTimeout(this.touchLongPressTimer);
+
+            if (isDragging) {
+                this.onMouseUp({});
+            } else {
+                // 单击 - 触发点击
+                const touch = e.changedTouches[0];
+                this.onClick({ clientX: touch.clientX, clientY: touch.clientY });
+            }
+
+            isDragging = false;
+            touchStartPos = null;
         });
+
+        // 阻止默认的触摸行为（如滚动、缩放）
+        document.body.addEventListener('touchmove', e => {
+            if (e.target === this.canvas) {
+                e.preventDefault();
+            }
+        }, { passive: false });
     }
 
     setupKeyboard() {

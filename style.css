@@ -317,56 +317,235 @@ body {
 /* 移动端适配 */
 @media (max-width: 768px) {
     .game-container {
+        flex-direction: column;
+        height: 100vh;
+        height: 100dvh; /* 动态视口高度 */
         padding: 8px;
         gap: 8px;
     }
 
     .top-bar {
-        flex-direction: column;
-        gap: 10px;
+        flex-wrap: wrap;
+        gap: 8px;
         padding: 10px 15px;
-        text-align: center;
     }
 
     .player-info {
-        flex-direction: column;
-        gap: 8px;
+        flex-direction: row;
+        align-items: center;
+        gap: 10px;
         width: 100%;
+        justify-content: center;
     }
 
     #playerId {
-        align-self: center;
+        font-size: 0.8em;
+        padding: 4px 8px;
     }
 
     .resources {
-        justify-content: center;
-        width: 100%;
+        gap: 8px;
     }
 
     .resources span {
-        flex: 1;
-        justify-content: center;
-        max-width: 150px;
+        flex: 0 1 auto;
+        padding: 6px 10px;
+        font-size: 0.9em;
     }
 
-    .status {
+    .status-area {
+        display: flex;
+        align-items: center;
+        gap: 10px;
         width: 100%;
         justify-content: center;
     }
 
+    #startBtn {
+        padding: 8px 16px;
+        font-size: 0.9em;
+    }
+
+    .game-area {
+        flex: 1;
+        min-height: 0;
+        position: relative;
+    }
+
+    #gameCanvas {
+        touch-action: none;
+    }
+
+    .game-tips {
+        position: absolute;
+        bottom: 10px;
+        left: 10px;
+        right: 10px;
+        display: flex;
+        justify-content: space-around;
+        background: rgba(0, 0, 0, 0.6);
+        padding: 8px;
+        border-radius: 8px;
+        font-size: 0.75rem;
+        pointer-events: none;
+        z-index: 10;
+    }
+
     .bottom-panel {
-        flex-direction: column;
+        flex-direction: row;
+        gap: 8px;
+        min-height: 120px;
     }
 
     .buildings, .units {
+        flex: 1;
         justify-content: center;
-        flex-wrap: wrap;
+        align-items: center;
+        padding: 10px;
     }
 
     .buildings .btn, .units .btn {
+        min-width: 65px;
+        min-height: 65px;
+        padding: 8px 10px;
+        font-size: 0.8em;
+        border-radius: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+    }
+
+    .buildings .btn::before, .units .btn::before {
+        font-size: 1.5em;
+        margin-bottom: 2px;
+    }
+
+    .buildings .btn::after, .units .btn::after {
+        font-size: 0.65em;
+    }
+
+    .btn.selected {
+        transform: scale(1.05);
+        box-shadow: 0 0 0 3px rgba(72, 187, 120, 0.4);
+    }
+
+    /* 移动端触摸优化 */
+    .btn {
+        -webkit-tap-highlight-color: transparent;
+        transition: transform 0.1s, box-shadow 0.1s;
+    }
+
+    .btn:active {
+        transform: scale(0.95);
+    }
+
+    /* 离线提示弹窗 */
+    .offline-notice {
+        padding: 1rem;
+    }
+
+    .offline-content {
+        padding: 1.5rem;
+        margin: 1rem;
+    }
+
+    .offline-hint {
+        font-size: 0.9rem;
+    }
+
+    .offline-content ul {
+        font-size: 0.85rem;
+    }
+
+    /* 游戏结束弹窗 */
+    .modal-content {
+        margin: 1rem;
+        padding: 2rem 1.5rem;
+    }
+
+    .modal-icon {
+        font-size: 4rem;
+    }
+
+    #gameOverTitle {
+        font-size: 1.5rem;
+    }
+
+    .btn-large {
+        padding: 1rem 2rem;
+        font-size: 1rem;
+    }
+}
+
+/* 触摸设备特定优化 */
+@media (hover: none) and (pointer: coarse) {
+    .btn {
+        min-height: 60px;
         min-width: 70px;
-        padding: 10px 12px;
+    }
+
+    .game-tips {
+        display: none; /* 移动端隐藏提示，节省空间 */
+    }
+
+    .top-bar {
+        padding: 8px 12px;
+    }
+
+    .resources span {
+        padding: 5px 8px;
         font-size: 0.85em;
+    }
+
+    .buildings .btn, .units .btn {
+        min-width: 60px;
+        min-height: 60px;
+        padding: 6px 8px;
+    }
+
+    .buildings .btn::before, .units .btn::before {
+        font-size: 1.4em;
+    }
+
+    .buildings .btn::after, .units .btn::after {
+        font-size: 0.6em;
+    }
+
+    .bottom-panel {
+        min-height: 110px;
+    }
+}
+
+/* 小屏手机优化 */
+@media (max-width: 480px) {
+    .player-info {
+        gap: 6px;
+    }
+
+    .resources {
+        gap: 6px;
+    }
+
+    .resources span {
+        padding: 4px 6px;
+        font-size: 0.8em;
+    }
+
+    .status-area {
+        gap: 8px;
+    }
+
+    #startBtn {
+        padding: 6px 12px;
+        font-size: 0.85em;
+    }
+
+    .buildings .btn, .units .btn {
+        min-width: 55px;
+        min-height: 55px;
+        padding: 5px 6px;
     }
 
     .buildings .btn::before, .units .btn::before {
@@ -374,37 +553,16 @@ body {
     }
 
     .buildings .btn::after, .units .btn::after {
-        font-size: 0.7em;
+        font-size: 0.55em;
     }
 
-    .modal-content {
-        padding: 30px 20px;
-        margin: 20px;
+    .bottom-panel {
+        min-height: 100px;
     }
 
-    .modal-content h2 {
-        font-size: 1.6em;
-    }
-}
-
-@media (max-width: 480px) {
-    .top-bar {
-        padding: 8px 12px;
-    }
-
-    .resources span {
-        padding: 6px 10px;
-        font-size: 0.9em;
-    }
-
-    .btn {
-        padding: 8px 16px;
-        font-size: 0.9em;
-    }
-
-    .buildings .btn, .units .btn {
-        min-width: 60px;
-        padding: 8px 10px;
+    .panel-title {
+        font-size: 0.8em;
+        margin-bottom: 6px;
     }
 }
 
