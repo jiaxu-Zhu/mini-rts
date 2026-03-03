@@ -1,4 +1,7 @@
 // 迷你多人RTS - 前端
+// ⚙️ 配置：修改 SERVER_URL 为你的后端地址（留空则连接到当前域名）
+const SERVER_URL = ''; // 例如: 'https://mini-rts.onrender.com'
+
 class MiniRTS {
     constructor() {
         this.canvas = document.getElementById('gameCanvas');
@@ -87,7 +90,7 @@ class MiniRTS {
     }
 
     connect() {
-        this.socket = io();
+        this.socket = io(SERVER_URL || undefined);
         this.updateStatus('connecting');
 
         this.socket.on('connect', () => {

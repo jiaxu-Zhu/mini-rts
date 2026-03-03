@@ -11,18 +11,37 @@
 
 ## 🚀 快速开始
 
-### 1. 部署后端
+### 1. 部署后端到 Render
 
 ```bash
-git clone https://github.com/你的用户名/mini-rts.git
-cd mini-rts
-npm install
-npm start
+# 1. 推送代码到 GitHub
+git push origin main
+
+# 2. 在 Render 创建 Web Service
+# - 连接你的 GitHub 仓库
+# - 选择 mini-rts 仓库
+# - 环境: Node
+# - 构建命令: npm install
+# - 启动命令: npm start
+# - 计划: Free
+# - 环境变量: PORT=10000
+
+# 3. 获取后端 URL (如: https://mini-rts.onrender.com)
 ```
 
-### 2. 部署前端
+### 2. 配置前端
 
 ```bash
+# 编辑 game.js，设置 SERVER_URL 为你的后端地址
+const SERVER_URL = 'https://mini-rts.onrender.com';
+```
+
+### 3. 部署前端到 GitHub Pages
+
+```bash
+git add .
+git commit -m "Update server URL"
+git push origin main
 # GitHub Pages 自动从根目录部署
 # 访问: https://你的用户名.github.io/mini-rts
 ```
