@@ -1,6 +1,212 @@
-// ⚔️ 迷你多人RTS - 优化版前端
+// ⚔️ 迷你多人RTS - 优化版前端（支持离线单人模式）
 // ⚙️ 配置：修改 SERVER_URL 为你的后端地址（留空则连接到当前域名）
 const SERVER_URL = ''; // 例如: 'https://mini-rts.onrender.com'
+
+// 离线游戏逻辑类
+class OfflineGame {
+    constructor() {
+        this.resources = { gold: 100, wood: 100 };
+        this.buildings = [];
+        this.units = [];
+        this.resourceSpots = [];
+        this.selectedUnits = [];
+        this.started = false;
+        this.tick = 0;
+
+        // 初始化基地
+        this.initBase();
+    }
+
+    initBase() {
+        const x = 400;
+        const y = 400;
+        this.buildings.push({
+            id: 'base-1', type: 'base', playerId: 'offline',
+            x, y, health: 2000, maxHealth: 2000
+        });
+
+        // 初始3个工人
+        for (let i = 0; i < 3; i++) {
+            this.units.push({
+                id: `worker-${i}`, type: 'worker', playerId: 'offline',
+                x: x + (Math.random() - 0.5) * 40,
+                y: y + (Math.random() - 0.5) * 40,
+                health: 50, maxHealth: 50,
+                damage: 5, range: 30, speed: 35, size: 6,
+                target: null, state: 'idle', attackCooldown: 0
+            });
+        }
+
+        // 资源点
+        for (let i = 0; i < 6; i++) {
+            this.resourceSpots.push({
+                id: `gold-${i}`, type: 'gold',
+                x: 300 + Math.random() * 800,
+                y: 300 + Math.random() * 800,
+                amount: 1000
+            });
+            this.resourceSpots.push({
+                id: `wood-${i}`, type: 'wood',
+                x: 300 + Math.random() * 800,
+                y: 300 + Math.random() * 800,
+                amount: 1000
+            });
+        }
+    }
+
+    update() {
+        if (!this.started) return;
+        this.tick++;
+
+        // 资源自动增长（基于建筑）
+        const goldMines = this.buildings.filter(b => b.type === 'gold-mine');
+        const lumberCamps = this.buildings.filter(b => b.type === 'lumber-camp');
+        this.resources.gold += goldMines.length * 0.2;
+        this.resources.wood += lumberCamps.length * 0.2;
+
+        // 单位更新
+        this.units.forEach(u => {
+            if (u.attackCooldown > 0) u.attackCooldown -= 0.016;
+
+            if (u.state === 'moving' && u.target) {
+                const dx = u.target.x - u.x;
+                const dy = u.target.y - u.y;
+                const dist = Math.sqrt(dx*dx + dy*dy);
+                if (dist > 5) {
+                    u.x += (dx/dist) * u.speed * 0.016;
+                    u.y += (dy/dist) * u.speed * 0.016;
+                } else {
+                    u.state = 'idle';
+                    u.target = null;
+                }
+            }
+
+            if (u.state === 'attacking' && u.target) {
+                const target = this.findTarget(u.target);
+                if (!target) {
+                    u.state = 'idle';
+                    u.target = null;
+                    return;
+                }
+                const dx = target.x - u.x;
+                const dy = target.y - u.y;
+                const dist = Math.sqrt(dx*dx + dy*dy);
+                if (dist > u.range) {
+                    u.x += (dx/dist) * u.speed * 0.016;
+                    u.y += (dy/dist) * u.speed * 0.016;
+                } else if (u.attackCooldown <= 0) {
+                    target.health -= u.damage;
+                    u.attackCooldown = 1;
+                }
+            }
+        });
+
+        // 清理死亡单位/建筑
+        this.units = this.units.filter(u => u.health > 0);
+        this.buildings = this.buildings.filter(b => b.health > 0);
+
+        // 检查基地是否被毁
+        const hasBase = this.buildings.some(b => b.type === 'base');
+        if (!hasBase && this.started) {
+            this.started = false;
+            return 'lose';
+        }
+        return null;
+    }
+
+    findTarget(ref) {
+        if (ref.type === 'unit') return this.units.find(u => u.id === ref.id);
+        if (ref.type === 'building') return this.buildings.find(b => b.id === ref.id);
+        return null;
+    }
+
+    build(type, x, y) {
+        const costs = {
+            'barracks': { gold: 50, wood: 30 },
+            'gold-mine': { gold: 20, wood: 40 },
+            'lumber-camp': { gold: 30, wood: 20 }
+        };
+        const cost = costs[type];
+        if (!cost || this.resources.gold < cost.gold || this.resources.wood < cost.wood) return false;
+
+        this.resources.gold -= cost.gold;
+        this.resources.wood -= cost.wood;
+
+        const stats = {
+            'base': { hp: 2000, size: 60 },
+            'barracks': { hp: 800, size: 50 },
+            'gold-mine': { hp: 500, size: 45, prod: 0.2 },
+            'lumber-camp': { hp: 500, size: 45, prod: 0.2 }
+        };
+
+        this.buildings.push({
+            id: `${type}-${Date.now()}`, type, playerId: 'offline',
+            x, y, health: stats[type].hp, maxHealth: stats[type].hp
+        });
+
+        if (type === 'gold-mine') this.resources.gold += 0.2;
+        if (type === 'lumber-camp') this.resources.wood += 0.2;
+
+        return true;
+    }
+
+    train(type, buildingId) {
+        const costs = {
+            'soldier': { gold: 50, wood: 20 },
+            'worker': { gold: 25, wood: 10 }
+        };
+        const cost = costs[type];
+        if (!cost || this.resources.gold < cost.gold || this.resources.wood < cost.wood) return false;
+
+        const building = this.buildings.find(b => b.id === buildingId);
+        if (!building) return false;
+
+        this.resources.gold -= cost.gold;
+        this.resources.wood -= cost.wood;
+
+        const stats = {
+            'soldier': { hp: 100, dmg: 10, range: 60, speed: 40, size: 8 },
+            'worker': { hp: 50, dmg: 5, range: 30, speed: 35, size: 6 }
+        };
+
+        this.units.push({
+            id: `${type}-${Date.now()}`, type, playerId: 'offline',
+            x: building.x + (Math.random() - 0.5) * 30,
+            y: building.y + (Math.random() - 0.5) * 30,
+            health: stats[type].hp, maxHealth: stats[type].hp,
+            damage: stats[type].dmg, range: stats[type].range,
+            speed: stats[type].speed, size: stats[type].size,
+            target: null, state: 'idle', attackCooldown: 0
+        });
+
+        return true;
+    }
+
+    select(x, y, radius) {
+        this.selectedUnits = this.units.filter(u =>
+            u.playerId === 'offline' &&
+            Math.sqrt((u.x - x)**2 + (u.y - y)**2) < radius
+        );
+    }
+
+    move(x, y) {
+        this.selectedUnits.forEach(u => {
+            u.target = { x, y };
+            u.state = 'moving';
+        });
+    }
+
+    restart() {
+        this.resources = { gold: 100, wood: 100 };
+        this.buildings = [];
+        this.units = [];
+        this.resourceSpots = [];
+        this.selectedUnits = [];
+        this.started = false;
+        this.tick = 0;
+        this.initBase();
+    }
+}
 
 class MiniRTS {
     constructor() {
@@ -38,6 +244,10 @@ class MiniRTS {
         // 视觉效果
         this.particles = [];
         this.floatingTexts = [];
+
+        // 离线模式
+        this.offlineGame = null;
+        this.isOffline = false;
 
         this.init();
     }
@@ -150,8 +360,15 @@ class MiniRTS {
     }
 
     connect() {
+        // 如果没有配置服务器地址，直接进入离线模式
+        if (!SERVER_URL) {
+            console.log('⚠️ 未配置 SERVER_URL，进入离线模式');
+            setTimeout(() => this.enableOfflineMode(), 1000);
+            return;
+        }
+
         try {
-            this.socket = io(SERVER_URL || undefined, {
+            this.socket = io(SERVER_URL, {
                 transports: ['websocket', 'polling'],
                 reconnection: true,
                 reconnectionAttempts: 10,
@@ -173,15 +390,15 @@ class MiniRTS {
             this.socket.on('disconnect', (reason) => {
                 console.log('❌ 连接断开:', reason);
                 this.updateStatus('disconnected');
-                document.getElementById('connectingOverlay')?.classList.remove('hidden');
                 this.addFloatingText('连接断开，正在重连...', '#ed8936');
             });
 
             this.socket.on('connect_error', (error) => {
                 console.error('❌ 连接错误:', error);
                 this.updateStatus('disconnected');
-                document.getElementById('connectingOverlay')?.classList.remove('hidden');
-                this.addFloatingText('连接失败，请检查服务器', '#f56565');
+                this.addFloatingText('连接失败，进入离线模式', '#f56565');
+                // 延迟后进入离线模式
+                setTimeout(() => this.enableOfflineMode(), 2000);
             });
 
             this.socket.on('state', (state) => {
@@ -208,17 +425,30 @@ class MiniRTS {
             setTimeout(() => {
                 if (!this.playerId) {
                     this.updateStatus('disconnected');
-                    document.getElementById('connectingOverlay')?.classList.remove('hidden');
-                    this.addFloatingText('连接超时，请稍后重试', '#f56565');
+                    this.addFloatingText('连接超时，进入离线模式', '#f56565');
+                    this.enableOfflineMode();
                 }
             }, 15000);
 
         } catch (error) {
             console.error('❌ Socket 初始化失败:', error);
             this.updateStatus('disconnected');
-            document.getElementById('connectingOverlay')?.classList.remove('hidden');
-            this.addFloatingText('初始化失败，刷新页面重试', '#f56565');
+            this.addFloatingText('初始化失败，进入离线模式', '#f56565');
+            setTimeout(() => this.enableOfflineMode(), 1000);
         }
+    }
+
+    enableOfflineMode() {
+        console.log('🎮 启用离线单人模式');
+        this.isOffline = true;
+        this.isOffline = true;
+        this.offlineGame = new OfflineGame();
+        this.gameState = 'lobby';
+        this.updateStatus('offline');
+        document.getElementById('connectingOverlay')?.classList.add('hidden');
+        document.getElementById('offlineNotice')?.classList.add('hidden');
+        this.addFloatingText('离线模式：单人游戏', '#ed8936');
+        this.updateUI();
     }
 
     updateStatus(status) {
@@ -227,8 +457,14 @@ class MiniRTS {
         const text = el.querySelector('.text');
 
         el.className = `status ${status}`;
-        text.textContent = status === 'connected' ? '已连接' :
-                          status === 'connecting' ? '连接中...' : '未连接';
+        let statusText = '';
+        switch(status) {
+            case 'connected': statusText = '已连接'; break;
+            case 'connecting': statusText = '连接中...'; break;
+            case 'offline': statusText = '离线模式'; break;
+            default: statusText = '未连接';
+        }
+        text.textContent = statusText;
 
         if (dot) {
             dot.style.animation = status === 'connected' ? 'none' : 'pulse 1.5s infinite';
@@ -236,18 +472,22 @@ class MiniRTS {
     }
 
     startGame() {
-        if (!this.playerId || !this.socket?.connected) {
+        if (this.isOffline) {
+            this.offlineGame.started = true;
+            this.gameState = 'playing';
+            this.addFloatingText('离线游戏开始！', '#48bb78');
+        } else if (!this.playerId || !this.socket?.connected) {
             this.showOfflineMode();
-            return;
+        } else {
+            this.gameState = 'playing';
+            this.socket.emit('start', (response) => {
+                if (response?.error) {
+                    this.addFloatingText(response.error, '#f56565');
+                } else {
+                    this.addFloatingText('游戏开始！', '#48bb78');
+                }
+            });
         }
-        this.gameState = 'playing';
-        this.socket.emit('start', (response) => {
-            if (response?.error) {
-                this.addFloatingText(response.error, '#f56565');
-            } else {
-                this.addFloatingText('游戏开始！', '#48bb78');
-            }
-        });
     }
 
     restart() {
@@ -255,23 +495,22 @@ class MiniRTS {
         this.selectedUnits = [];
         this.buildType = null;
         this.trainType = null;
-        if (this.socket?.connected) {
+        this.hideGameOver();
+
+        if (this.isOffline) {
+            this.offlineGame.restart();
+            this.updateUI();
+        } else if (this.socket?.connected) {
             this.socket.emit('restart');
         }
-        this.hideGameOver();
+
         this.updateButtons();
         this.updateSelectedButtons();
     }
 
     showOfflineMode() {
-        this.addFloatingText('离线模式：无法连接服务器', '#ed8936');
-        this.gameState = 'offline';
-        // 显示离线提示弹窗
-        document.getElementById('offlineNotice')?.classList.remove('hidden');
-        // 显示提示信息
-        setTimeout(() => {
-            this.addFloatingText('请检查后端是否已部署', '#f56565');
-        }, 2000);
+        this.addFloatingText('连接失败，进入离线模式', '#ed8936');
+        this.enableOfflineMode();
     }
 
     isConnected() {
@@ -302,16 +541,36 @@ class MiniRTS {
         const pos = this.getWorldPos(e);
 
         if (this.buildType) {
-            if (this.safeEmit('build', { type: this.buildType, x: pos.x, y: pos.y })) {
+            if (this.isOffline) {
+                if (this.offlineGame.build(this.buildType, pos.x, pos.y)) {
+                    this.createParticles(pos.x, pos.y, '#667eea', 5);
+                    this.buildType = null;
+                    this.updateButtons();
+                    this.updateSelectedButtons();
+                    this.updateUI();
+                } else {
+                    this.addFloatingText('资源不足', '#f56565', pos.x, pos.y);
+                }
+            } else if (this.safeEmit('build', { type: this.buildType, x: pos.x, y: pos.y })) {
                 this.createParticles(pos.x, pos.y, '#667eea', 5);
                 this.buildType = null;
                 this.updateButtons();
                 this.updateSelectedButtons();
             }
         } else if (this.trainType) {
-            const barracks = this.buildings.find(b => b.type === 'barracks' && b.playerId === this.playerId);
+            const barracks = this.getBuildings().find(b => b.type === 'barracks' && b.playerId === (this.isOffline ? 'offline' : this.playerId));
             if (barracks) {
-                if (this.safeEmit('train', { type: this.trainType, buildingId: barracks.id })) {
+                if (this.isOffline) {
+                    if (this.offlineGame.train(this.trainType, barracks.id)) {
+                        this.createParticles(barracks.x, barracks.y, '#48bb78', 8);
+                        this.trainType = null;
+                        this.updateButtons();
+                        this.updateSelectedButtons();
+                        this.updateUI();
+                    } else {
+                        this.addFloatingText('资源不足', '#f56565', pos.x, pos.y);
+                    }
+                } else if (this.safeEmit('train', { type: this.trainType, buildingId: barracks.id })) {
                     this.createParticles(barracks.x, barracks.y, '#48bb78', 8);
                     this.trainType = null;
                     this.updateButtons();
@@ -322,7 +581,12 @@ class MiniRTS {
             }
         } else {
             // 选择单位
-            this.safeEmit('select', { x: pos.x, y: pos.y, radius: 25 });
+            if (this.isOffline) {
+                this.offlineGame.select(pos.x, pos.y, 25);
+                this.selectedUnits = this.offlineGame.selectedUnits;
+            } else {
+                this.safeEmit('select', { x: pos.x, y: pos.y, radius: 25 });
+            }
         }
     }
 
@@ -330,7 +594,11 @@ class MiniRTS {
         if (this.gameState !== 'playing') return;
         const pos = this.getWorldPos(e);
         // 双击快速移动到位置
-        this.safeEmit('move', { x: pos.x, y: pos.y });
+        if (this.isOffline) {
+            this.offlineGame.move(pos.x, pos.y);
+        } else {
+            this.safeEmit('move', { x: pos.x, y: pos.y });
+        }
     }
 
     onMouseDown(e) {
@@ -342,7 +610,11 @@ class MiniRTS {
         } else if (e.button === 2) { // 右键移动/攻击
             const pos = this.getWorldPos(e);
             if (this.selectedUnits.length > 0) {
-                this.safeEmit('move', { x: pos.x, y: pos.y });
+                if (this.isOffline) {
+                    this.offlineGame.move(pos.x, pos.y);
+                } else {
+                    this.safeEmit('move', { x: pos.x, y: pos.y });
+                }
                 this.createParticles(pos.x, pos.y, '#fff', 3);
             }
         }
@@ -375,15 +647,17 @@ class MiniRTS {
     }
 
     updateUI() {
-        document.getElementById('gold').textContent = Math.floor(this.resources.gold);
-        document.getElementById('wood').textContent = Math.floor(this.resources.wood);
+        const resources = this.isOffline ? this.offlineGame.resources : this.resources;
+        document.getElementById('gold').textContent = Math.floor(resources.gold);
+        document.getElementById('wood').textContent = Math.floor(resources.wood);
     }
 
     updateButtons() {
+        const resources = this.isOffline ? this.offlineGame.resources : this.resources;
         document.querySelectorAll('.build, .train').forEach(btn => {
             const costGold = parseInt(btn.dataset.gold);
             const costWood = parseInt(btn.dataset.wood);
-            btn.disabled = this.resources.gold < costGold || this.resources.wood < costWood;
+            btn.disabled = resources.gold < costGold || resources.wood < costWood;
         });
     }
 
@@ -525,6 +799,36 @@ class MiniRTS {
         this.updateCamera();
         this.updateParticles(dt);
         this.updateFloatingTexts(dt);
+
+        // 离线模式更新
+        if (this.isOffline && this.offlineGame && this.gameState === 'playing') {
+            const result = this.offlineGame.update();
+            if (result === 'lose') {
+                this.showGameOver(false);
+            }
+
+            // 同步数据到渲染
+            this.resources = this.offlineGame.resources;
+            this.buildings = this.offlineGame.buildings;
+            this.units = this.offlineGame.units;
+            this.resourceSpots = this.offlineGame.resourceSpots;
+            this.selectedUnits = this.offlineGame.selectedUnits;
+
+            this.updateUI();
+            this.updateButtons();
+        }
+    }
+
+    getBuildings() {
+        return this.isOffline ? this.offlineGame.buildings : this.buildings;
+    }
+
+    getUnits() {
+        return this.isOffline ? this.offlineGame.units : this.units;
+    }
+
+    getResourceSpots() {
+        return this.isOffline ? this.offlineGame.resourceSpots : this.resourceSpots;
     }
 
     render() {
@@ -605,7 +909,8 @@ class MiniRTS {
 
     drawResourceSpots() {
         const ctx = this.ctx;
-        this.resourceSpots.forEach(spot => {
+        const spots = this.getResourceSpots();
+        spots.forEach(spot => {
             const color = spot.type === 'gold' ? '#f6e05e' : '#b7791f';
             const icon = spot.type === 'gold' ? '💰' : '🪵';
 
@@ -628,8 +933,9 @@ class MiniRTS {
 
     drawBuildings() {
         const ctx = this.ctx;
-        this.buildings.forEach(b => {
-            const isMine = b.playerId === this.playerId;
+        const buildings = this.getBuildings();
+        buildings.forEach(b => {
+            const isMine = b.playerId === (this.isOffline ? 'offline' : this.playerId);
             const color = isMine ? '#48bb78' : '#f56565';
             const size = b.type === 'base' ? 60 : b.type === 'gold-mine' || b.type === 'lumber-camp' ? 45 : 50;
 
@@ -676,8 +982,9 @@ class MiniRTS {
 
     drawUnits() {
         const ctx = this.ctx;
-        this.units.forEach(u => {
-            const isMine = u.playerId === this.playerId;
+        const units = this.getUnits();
+        units.forEach(u => {
+            const isMine = u.playerId === (this.isOffline ? 'offline' : this.playerId);
             const color = isMine ? '#68d391' : '#fc8181';
             const radius = u.type === 'soldier' ? 10 : 7;
 

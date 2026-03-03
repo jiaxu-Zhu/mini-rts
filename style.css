@@ -128,6 +128,12 @@ body {
     border-color: rgba(245, 101, 101, 0.4);
 }
 
+.offline {
+    background: rgba(237, 137, 54, 0.2);
+    color: var(--warning);
+    border-color: rgba(237, 137, 54, 0.4);
+}
+
 .btn {
     background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
     color: white;
