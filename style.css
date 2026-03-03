@@ -411,9 +411,9 @@ body {
 
     .bottom-panel {
         flex-direction: row;
-        gap: 6px;
-        min-height: 95px; /* 减小高度 */
-        max-height: 110px;
+        gap: 4px;
+        min-height: 90px; /* 进一步减小 */
+        max-height: 100px;
         flex-shrink: 0;
     }
 
@@ -421,36 +421,46 @@ body {
         flex: 1;
         justify-content: center;
         align-items: center;
-        padding: 8px;
-        min-height: 85px;
-        max-height: 100px;
+        padding: 6px;
+        min-height: 80px;
+        max-height: 95px;
+        overflow-x: auto; /* 允许横向滚动 */
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
     }
 
     .buildings .btn, .units .btn {
-        min-width: 52px;
-        min-height: 52px;
-        padding: 5px 7px;
-        font-size: 0.72em;
-        border-radius: 8px;
+        min-width: 48px;
+        min-height: 48px;
+        padding: 4px 6px;
+        font-size: 0.68em;
+        border-radius: 6px;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
         gap: 2px;
+        flex-shrink: 0; /* 防止按钮被压缩 */
     }
 
     .buildings .btn::before, .units .btn::before {
-        font-size: 1.25em;
-        margin-bottom: 1px;
+        font-size: 1.2em;
+        margin-bottom: 0;
     }
 
     .buildings .btn::after, .units .btn::after {
-        font-size: 0.58em;
+        font-size: 0.55em;
+        display: none; /* 移动端隐藏成本文字，节省空间 */
     }
 
     .btn.selected {
         transform: scale(1.05);
         box-shadow: 0 0 0 3px rgba(72, 187, 120, 0.4);
+    }
+
+    /* 移动端面板标题 */
+    .panel-title {
+        display: none; /* 移动端隐藏面板标题，节省空间 */
     }
 
     /* 移动端触摸优化 */
