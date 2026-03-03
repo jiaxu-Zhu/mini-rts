@@ -326,6 +326,7 @@ class MiniRTS {
         let touchStartPos = null;
         let touchStartTime = 0;
         let isDragging = false;
+        let longPressTriggered = false;
 
         this.canvas.addEventListener('touchstart', e => {
             e.preventDefault();
@@ -333,11 +334,13 @@ class MiniRTS {
             const now = Date.now();
             touchStartPos = { x: touch.clientX, y: touch.clientY };
             touchStartTime = now;
+            longPressTriggered = false;
 
-            // 检测是否为长按（用于右键菜单替代）
+            // 长按检测（用于攻击）
             this.touchLongPressTimer = setTimeout(() => {
-                // 长按显示右键菜单提示
-                this.addFloatingText('长按可移动单位', '#667eea', touch.clientX, touch.clientY);
+                longPressTriggered = true;
+                // 长按触发攻击
+                this.handleLongPress(touch.clientX, touch.clientY);
             }, 500);
 
             // 双击检测
@@ -372,7 +375,7 @@ class MiniRTS {
 
             if (isDragging) {
                 this.onMouseUp({});
-            } else {
+            } else if (!longPressTriggered) {
                 // 单击 - 触发点击
                 const touch = e.changedTouches[0];
                 this.onClick({ clientX: touch.clientX, clientY: touch.clientY });
@@ -388,6 +391,33 @@ class MiniRTS {
                 e.preventDefault();
             }
         }, { passive: false });
+    }
+
+    handleLongPress(clientX, clientY) {
+        const pos = this.getWorldPos({ clientX, clientY });
+
+        if (this.isOffline) {
+            // 检查长按位置是否有敌人
+            const enemyUnits = this.offlineGame.units.filter(u => u.playerId !== 'offline');
+            const enemyBuildings = this.offlineGame.buildings.filter(b => b.playerId !== 'offline');
+            const target = this.findEnemyAtPosition(pos, enemyUnits, enemyBuildings);
+
+            if (target && this.selectedUnits.length > 0) {
+                // 攻击敌人
+                this.offlineGame.selectedUnits.forEach(u => {
+                    u.target = { type: target.type, id: target.id };
+                    u.state = 'attacking';
+                });
+                this.createParticles(pos.x, pos.y, '#f56565', 8);
+                this.addFloatingText('攻击！', '#f56565', pos.x, pos.y);
+            } else {
+                // 长按没有敌人，显示提示
+                this.addFloatingText('长按敌人可攻击', '#667eea', clientX, clientY);
+            }
+        } else {
+            // 在线模式：发送长按攻击事件
+            this.safeEmit('longPressAttack', { x: pos.x, y: pos.y });
+        }
     }
 
     setupKeyboard() {
@@ -659,12 +689,49 @@ class MiniRTS {
     onDoubleClick(e) {
         if (this.gameState !== 'playing') return;
         const pos = this.getWorldPos(e);
-        // 双击快速移动到位置
+
+        // 检查双击位置是否有敌人单位（用于攻击）
         if (this.isOffline) {
-            this.offlineGame.move(pos.x, pos.y);
+            const enemyUnits = this.offlineGame.units.filter(u => u.playerId !== 'offline');
+            const enemyBuildings = this.offlineGame.buildings.filter(b => b.playerId !== 'offline');
+            const target = this.findEnemyAtPosition(pos, enemyUnits, enemyBuildings);
+
+            if (target && this.selectedUnits.length > 0) {
+                // 攻击敌人
+                this.offlineGame.selectedUnits.forEach(u => {
+                    u.target = { type: target.type, id: target.id };
+                    u.state = 'attacking';
+                });
+                this.createParticles(pos.x, pos.y, '#f56565', 8);
+                this.addFloatingText('攻击！', '#f56565', pos.x, pos.y);
+            } else {
+                // 移动
+                this.offlineGame.move(pos.x, pos.y);
+                this.createParticles(pos.x, pos.y, '#fff', 3);
+            }
         } else {
-            this.safeEmit('move', { x: pos.x, y: pos.y });
+            // 在线模式：发送双击事件，由服务器处理
+            this.safeEmit('doubleClick', { x: pos.x, y: pos.y });
         }
+    }
+
+    findEnemyAtPosition(pos, enemyUnits, enemyBuildings) {
+        // 检查单位
+        for (const u of enemyUnits) {
+            const dist = Math.sqrt((u.x - pos.x)**2 + (u.y - pos.y)**2);
+            if (dist < u.size + 10) {
+                return { type: 'unit', id: u.id, x: u.x, y: u.y };
+            }
+        }
+        // 检查建筑
+        for (const b of enemyBuildings) {
+            const size = b.type === 'base' ? 60 : b.type === 'gold-mine' || b.type === 'lumber-camp' ? 45 : 50;
+            const dist = Math.sqrt((b.x - pos.x)**2 + (b.y - pos.y)**2);
+            if (dist < size/2 + 10) {
+                return { type: 'building', id: b.id, x: b.x, y: b.y };
+            }
+        }
+        return null;
     }
 
     onMouseDown(e) {
