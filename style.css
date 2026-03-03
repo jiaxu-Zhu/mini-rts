@@ -1,26 +1,49 @@
+/* 🎨 迷你RTS - 优化版界面 */
+
+:root {
+    --primary: #667eea;
+    --primary-dark: #5a67d8;
+    --success: #48bb78;
+    --danger: #f56565;
+    --warning: #ed8936;
+    --gold: #f6e05e;
+    --wood: #b7791f;
+    --bg-dark: #1a202c;
+    --bg-card: #2d3748;
+    --text-light: #e2e8f0;
+    --text-muted: #a0aec0;
+    --border: #4a5568;
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+}
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: #1a1a2e;
-    color: #fff;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+    color: var(--text-light);
     overflow: hidden;
     height: 100vh;
     width: 100vw;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
+/* 主容器 */
 .game-container {
     display: flex;
     flex-direction: column;
     height: 100vh;
     max-height: 100vh;
     overflow: hidden;
-    gap: 8px;
-    padding: 8px;
+    gap: 10px;
+    padding: 10px;
 }
 
 /* 顶部栏 */
@@ -28,148 +51,301 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: rgba(0,0,0,0.6);
-    padding: 10px 15px;
-    border-radius: 8px;
+    background: rgba(45, 55, 72, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 12px 20px;
+    border-radius: 12px;
     flex-shrink: 0;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
 }
 
 .player-info {
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 20px;
 }
 
 #playerId {
-    font-size: 0.9em;
-    color: #667eea;
-    font-family: monospace;
+    font-size: 0.85em;
+    color: var(--primary);
+    font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+    background: rgba(102, 126, 234, 0.1);
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 1px solid rgba(102, 126, 234, 0.3);
 }
 
 .resources {
     display: flex;
-    gap: 12px;
+    gap: 15px;
 }
 
 .resources span {
-    background: rgba(255,255,255,0.1);
-    padding: 4px 10px;
-    border-radius: 4px;
-    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.08);
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1em;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.2s ease;
 }
 
-.gold { color: #ffd700; }
-.wood { color: #8b4513; }
+.resources span:hover {
+    background: rgba(255, 255, 255, 0.12);
+    transform: translateY(-1px);
+}
+
+.gold { color: var(--gold); }
+.wood { color: var(--wood); }
 
 .status {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
 }
 
 .status span {
-    padding: 4px 10px;
-    border-radius: 4px;
+    padding: 6px 12px;
+    border-radius: 6px;
     font-size: 0.85em;
+    font-weight: 500;
+    border: 1px solid transparent;
 }
 
-.connected { background: #4caf50; }
-.disconnected { background: #f44336; }
+.connected {
+    background: rgba(72, 187, 120, 0.2);
+    color: var(--success);
+    border-color: rgba(72, 187, 120, 0.4);
+}
+
+.disconnected {
+    background: rgba(245, 101, 101, 0.2);
+    color: var(--danger);
+    border-color: rgba(245, 101, 101, 0.4);
+}
 
 .btn {
-    background: #667eea;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
     color: white;
     border: none;
-    padding: 6px 14px;
-    border-radius: 4px;
+    padding: 10px 20px;
+    border-radius: 8px;
     cursor: pointer;
-    font-size: 0.9em;
-    transition: 0.2s;
+    font-size: 0.95em;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    box-shadow: var(--shadow);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.btn:hover { background: #5a67d8; }
-.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+    background: linear-gradient(135deg, var(--primary-dark) 0%, #4c51bf 100%);
+}
+
+.btn:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: #4a5568;
+}
 
 /* 游戏区域 */
 .game-area {
     flex: 1;
     position: relative;
-    background: rgba(0,0,0,0.3);
-    border-radius: 8px;
+    background: rgba(26, 32, 44, 0.6);
+    border-radius: 12px;
     overflow: hidden;
     min-height: 0;
+    border: 1px solid var(--border);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 #gameCanvas {
     width: 100%;
     height: 100%;
     display: block;
-    background: #2d3436;
+    background: #2d3748;
     cursor: crosshair;
+    image-rendering: crisp-edges;
 }
 
 /* 底部面板 */
 .bottom-panel {
     display: flex;
-    gap: 10px;
+    gap: 12px;
     flex-shrink: 0;
 }
 
 .buildings, .units {
     display: flex;
-    gap: 6px;
-    background: rgba(0,0,0,0.6);
-    padding: 8px;
-    border-radius: 8px;
+    gap: 8px;
+    background: rgba(45, 55, 72, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
 }
 
-.buildings { flex: 2; }
-.units { flex: 1; }
+.buildings {
+    flex: 2;
+    justify-content: center;
+}
+
+.units {
+    flex: 1;
+    justify-content: center;
+}
+
+.buildings .btn, .units .btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    min-width: 80px;
+    padding: 12px 16px;
+    font-size: 0.9em;
+}
+
+.buildings .btn::before, .units .btn::before {
+    font-size: 1.5em;
+    margin-bottom: 2px;
+}
+
+.buildings .btn[data-type="barracks"]::before { content: "🏚️"; }
+.buildings .btn[data-type="gold-mine"]::before { content: "⛏️"; }
+.buildings .btn[data-type="lumber-camp"]::before { content: "🪓"; }
+
+.units .btn[data-type="soldier"]::before { content: "⚔️"; }
+.units .btn[data-type="worker"]::before { content: "👷"; }
+
+/* 成本显示 */
+.buildings .btn::after, .units .btn::after {
+    font-size: 0.75em;
+    color: var(--text-muted);
+    font-family: monospace;
+}
+
+.buildings .btn[data-type="barracks"]::after { content: "50💰 30🪵"; }
+.buildings .btn[data-type="gold-mine"]::after { content: "20💰 40🪵"; }
+.buildings .btn[data-type="lumber-camp"]::after { content: "30💰 20🪵"; }
+
+.units .btn[data-type="soldier"]::after { content: "50💰 20🪵"; }
+.units .btn[data-type="worker"]::after { content: "25💰 10🪵"; }
+
+/* 选中状态 */
+.btn.selected {
+    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+    border-color: rgba(72, 187, 120, 0.6);
+    box-shadow: 0 0 0 3px rgba(72, 187, 120, 0.3);
+}
 
 /* 模态框 */
 .modal {
     position: fixed;
     top: 0; left: 0;
     width: 100%; height: 100%;
-    background: rgba(0,0,0,0.8);
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(5px);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 1000;
+    animation: fadeIn 0.3s ease;
 }
 
 .modal.hidden { display: none; }
 
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
 .modal-content {
-    background: #2d3436;
-    padding: 30px;
-    border-radius: 12px;
+    background: var(--bg-card);
+    padding: 40px;
+    border-radius: 16px;
     text-align: center;
-    border: 2px solid #667eea;
+    border: 2px solid var(--primary);
+    box-shadow: var(--shadow-lg);
     max-width: 90%;
+    width: 400px;
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
 }
 
 .modal-content h2 {
-    margin-bottom: 15px;
-    color: #667eea;
+    margin-bottom: 20px;
+    font-size: 2em;
+    color: var(--primary);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .modal-content p {
-    margin-bottom: 20px;
+    margin-bottom: 30px;
     font-size: 1.1em;
+    color: var(--text-muted);
+    line-height: 1.6;
+}
+
+.modal-content .btn {
+    min-width: 150px;
+    font-size: 1.1em;
+    padding: 12px 30px;
 }
 
 /* 移动端适配 */
-@media (max-width: 600px) {
+@media (max-width: 768px) {
+    .game-container {
+        padding: 8px;
+        gap: 8px;
+    }
+
     .top-bar {
         flex-direction: column;
-        gap: 8px;
+        gap: 10px;
+        padding: 10px 15px;
         text-align: center;
     }
 
     .player-info {
         flex-direction: column;
-        gap: 5px;
+        gap: 8px;
+        width: 100%;
+    }
+
+    #playerId {
+        align-self: center;
+    }
+
+    .resources {
+        justify-content: center;
+        width: 100%;
+    }
+
+    .resources span {
+        flex: 1;
+        justify-content: center;
+        max-width: 150px;
+    }
+
+    .status {
+        width: 100%;
+        justify-content: center;
     }
 
     .bottom-panel {
@@ -178,5 +354,80 @@ body {
 
     .buildings, .units {
         justify-content: center;
+        flex-wrap: wrap;
     }
+
+    .buildings .btn, .units .btn {
+        min-width: 70px;
+        padding: 10px 12px;
+        font-size: 0.85em;
+    }
+
+    .buildings .btn::before, .units .btn::before {
+        font-size: 1.3em;
+    }
+
+    .buildings .btn::after, .units .btn::after {
+        font-size: 0.7em;
+    }
+
+    .modal-content {
+        padding: 30px 20px;
+        margin: 20px;
+    }
+
+    .modal-content h2 {
+        font-size: 1.6em;
+    }
+}
+
+@media (max-width: 480px) {
+    .top-bar {
+        padding: 8px 12px;
+    }
+
+    .resources span {
+        padding: 6px 10px;
+        font-size: 0.9em;
+    }
+
+    .btn {
+        padding: 8px 16px;
+        font-size: 0.9em;
+    }
+
+    .buildings .btn, .units .btn {
+        min-width: 60px;
+        padding: 8px 10px;
+    }
+}
+
+/* 动画效果 */
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+.pulse {
+    animation: pulse 2s infinite;
+}
+
+/* 滚动条美化 */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(102, 126, 234, 0.5);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(102, 126, 234, 0.7);
 }
