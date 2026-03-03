@@ -436,61 +436,140 @@ body {
         display: none; /* 移动端隐藏提示，已移除 */
     }
 
+    /* 移动端布局重构 */
+    .game-container {
+        height: 100vh;
+        height: 100dvh;
+        padding: 4px;
+        gap: 4px;
+    }
+
+    .top-bar {
+        flex-wrap: nowrap;
+        gap: 3px;
+        padding: 3px 6px;
+        min-height: 38px;
+        max-height: 44px;
+    }
+
+    .player-info {
+        gap: 3px;
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+    }
+
+    #playerId {
+        display: none;
+    }
+
+    .resources {
+        gap: 3px;
+        flex-shrink: 0;
+    }
+
+    .resources span {
+        padding: 2px 4px;
+        font-size: 0.7em;
+        white-space: nowrap;
+    }
+
+    .resources .icon {
+        font-size: 0.8em;
+    }
+
+    .status-area {
+        gap: 3px;
+        flex-shrink: 0;
+    }
+
+    #startBtn, #helpBtn {
+        padding: 3px 6px;
+        font-size: 0.7em;
+        min-width: 50px;
+        min-height: 32px;
+    }
+
+    #startBtn .btn-text, #helpBtn .btn-text {
+        display: none;
+    }
+
+    #startBtn .btn-icon, #helpBtn .btn-icon {
+        font-size: 1em;
+    }
+
+    .status .text {
+        font-size: 0.65em;
+        max-width: 35px;
+    }
+
+    .game-area {
+        flex: 1;
+        min-height: 200px;
+        max-height: calc(100dvh - 180px);
+    }
+
+    #gameCanvas {
+        width: 100%;
+        height: 100%;
+    }
+
     .bottom-panel {
         flex-direction: row;
         gap: 2px;
-        min-height: 80px; /* 进一步减小 */
-        max-height: 90px;
+        min-height: 75px;
+        max-height: 85px;
         flex-shrink: 0;
     }
 
     .buildings, .units {
         flex: 1;
-        justify-content: flex-start; /* 左对齐，支持滚动 */
+        justify-content: flex-start;
         align-items: center;
-        padding: 4px;
-        min-height: 70px;
-        max-height: 85px;
-        overflow-x: auto; /* 允许横向滚动 */
+        padding: 3px;
+        min-height: 68px;
+        max-height: 78px;
+        overflow-x: auto;
         overflow-y: hidden;
         -webkit-overflow-scrolling: touch;
-        scrollbar-width: none; /* Firefox隐藏滚动条 */
+        scrollbar-width: none;
     }
 
     .buildings::-webkit-scrollbar, .units::-webkit-scrollbar {
-        display: none; /* Chrome/Safari隐藏滚动条 */
+        display: none;
     }
 
     .buildings .btn, .units .btn {
-        min-width: 44px;
-        min-height: 44px;
-        padding: 4px 6px;
-        font-size: 0.65em;
-        border-radius: 6px;
+        min-width: 38px;
+        min-height: 38px;
+        padding: 2px 3px;
+        font-size: 0.55em;
+        border-radius: 4px;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        gap: 2px;
-        flex-shrink: 0; /* 防止按钮被压缩 */
+        gap: 1px;
+        flex-shrink: 0;
+        line-height: 1;
     }
 
     .buildings .btn .btn-icon, .units .btn .btn-icon {
-        font-size: 1.2em;
+        font-size: 1em;
         line-height: 1;
-        margin-bottom: 1px;
+        margin: 0;
+        padding: 0;
     }
 
     .buildings .btn .btn-label, .units .btn .btn-label {
-        font-size: 0.65em;
-        line-height: 1.2;
+        font-size: 0.55em;
+        line-height: 1.1;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        max-width: 100%;
+        max-width: 36px;
     }
 
-    /* 移除伪元素，避免重复 */
     .buildings .btn::before, .units .btn::before,
     .buildings .btn::after, .units .btn::after {
         display: none !important;
@@ -499,28 +578,138 @@ body {
 
     .btn.selected {
         transform: scale(1.05);
-        box-shadow: 0 0 0 3px rgba(72, 187, 120, 0.4);
+        box-shadow: 0 0 0 2px rgba(72, 187, 120, 0.4);
     }
 
-    /* 移动端面板标题 */
     .panel-title {
-        display: none; /* 移动端隐藏面板标题 */
+        display: none;
     }
 
-    /* 按钮组横向排列 */
     .button-group {
         display: flex;
         flex-direction: row;
-        gap: 4px;
+        gap: 3px;
         width: 100%;
         justify-content: flex-start;
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
+        padding: 0 2px;
     }
 
     .button-group::-webkit-scrollbar {
         display: none;
     }
+
+    /* 触摸优化 */
+    .btn {
+        -webkit-tap-highlight-color: transparent;
+        transition: transform 0.1s, box-shadow 0.1s;
+        touch-action: manipulation;
+    }
+
+    .btn:active {
+        transform: scale(0.92);
+    }
+
+    /* 模态框适配 */
+    .modal-content {
+        margin: 10px;
+        padding: 1.5rem;
+        width: calc(100% - 20px);
+        max-width: none;
+    }
+
+    .modal-icon {
+        font-size: 3rem;
+    }
+
+    #gameOverTitle {
+        font-size: 1.3rem;
+    }
+
+    .btn-large {
+        padding: 0.8rem 1.5rem;
+        font-size: 0.9rem;
+        min-width: 120px;
+    }
+
+    /* 离线提示 */
+    .offline-content {
+        margin: 10px;
+        padding: 1.5rem;
+        width: calc(100% - 20px);
+    }
+
+    .offline-icon {
+        font-size: 3rem;
+        margin-bottom: 15px;
+    }
+
+    .offline-content h3 {
+        font-size: 1.5rem;
+        margin-bottom: 12px;
+    }
+
+    .offline-content p {
+        font-size: 0.9rem;
+        margin-bottom: 8px;
+    }
+
+    .offline-content ul {
+        font-size: 0.85rem;
+        margin: 12px auto;
+        max-width: 220px;
+    }
+
+    /* 玩法弹窗 */
+    .help-content {
+        padding: 15px;
+        margin: 10px;
+        max-height: 90vh;
+    }
+
+    .help-content .modal-icon {
+        font-size: 2rem;
+        margin-bottom: 8px;
+    }
+
+    .help-content h2 {
+        font-size: 1.3rem;
+        margin-bottom: 15px;
+    }
+
+    .help-section {
+        padding: 10px;
+        margin-bottom: 12px;
+    }
+
+    .help-section h3 {
+        font-size: 0.95rem;
+        margin-bottom: 8px;
+    }
+
+    .help-section p, .help-section li {
+        font-size: 0.85rem;
+        line-height: 1.5;
+    }
+
+    .help-section li {
+        padding: 4px 0;
+        padding-left: 16px;
+    }
+
+    /* 连接中遮罩 */
+    .connecting-overlay p {
+        font-size: 1rem;
+    }
+
+    .spinner {
+        width: 40px;
+        height: 40px;
+        border-width: 3px;
+        margin-bottom: 15px;
+    }
+}
 
     /* 移动端触摸优化 */
     .btn {
