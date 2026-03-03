@@ -40,6 +40,10 @@
                     <span class="btn-icon">▶️</span>
                     <span class="btn-text">开始游戏</span>
                 </button>
+                <button id="helpBtn" class="btn btn-secondary" title="游戏玩法">
+                    <span class="btn-icon">❓</span>
+                    <span class="btn-text">玩法</span>
+                </button>
             </div>
         </header>
 
@@ -97,6 +101,73 @@
             <button id="restartBtn" class="btn btn-primary btn-large">
                 <span class="btn-icon">🔄</span>
                 <span class="btn-text">再来一局</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- 玩法说明弹窗 -->
+    <div id="helpModal" class="modal hidden" role="dialog" aria-modal="true">
+        <div class="modal-content help-content">
+            <div class="modal-icon">📖</div>
+            <h2>游戏玩法</h2>
+            <div class="help-sections">
+                <section class="help-section">
+                    <h3>🎯 游戏目标</h3>
+                    <p>建立基地，训练军队，消灭对手的基地！</p>
+                </section>
+
+                <section class="help-section">
+                    <h3>🏗️ 建筑</h3>
+                    <ul>
+                        <li><strong>🏛️ 基地</strong>：初始建筑，生产资源，被毁则失败</li>
+                        <li><strong>🏚️ 兵营</strong>：训练士兵和工人（50金 30木）</li>
+                        <li><strong>⛏️ 金矿</strong>：自动产金（20金 40木）</li>
+                        <li><strong>🪓 伐木场</strong>：自动产木（30金 20木）</li>
+                    </ul>
+                </section>
+
+                <section class="help-section">
+                    <h3>⚔️ 单位</h3>
+                    <ul>
+                        <li><strong>⚔️ 士兵</strong>：战斗单位，高伤害（50金 20木）</li>
+                        <li><strong>👷 工人</strong>：采集资源，低伤害（25金 10木）</li>
+                    </ul>
+                </section>
+
+                <section class="help-section">
+                    <h3>🖱️ 操作指南</h3>
+                    <ul>
+                        <li><strong>单击</strong>：选择单位 / 点击按钮建造/训练</li>
+                        <li><strong>右键</strong>：移动单位 / 攻击敌人</li>
+                        <li><strong>双击</strong>：快速移动单位到位置</li>
+                        <li><strong>拖拽</strong>：移动地图视角</li>
+                    </ul>
+                </section>
+
+                <section class="help-section">
+                    <h3>📱 手机端</h3>
+                    <ul>
+                        <li><strong>单击</strong>：选择/建造/训练</li>
+                        <li><strong>双击</strong>：移动单位</li>
+                        <li><strong>拖拽</strong>：移动地图</li>
+                        <li><strong>长按</strong>：显示移动提示</li>
+                    </ul>
+                </section>
+
+                <section class="help-section">
+                    <h3>💡 游戏策略</h3>
+                    <ul>
+                        <li>优先建造金矿和伐木场，增加资源产量</li>
+                        <li>训练士兵组成军队，保护基地</li>
+                        <li>探索地图，找到对手位置</li>
+                        <li>集中火力攻击敌方建筑</li>
+                        <li>离线模式下可练习战术</li>
+                    </ul>
+                </section>
+            </div>
+            <button class="btn btn-primary btn-large" onclick="document.getElementById('helpModal').classList.add('hidden')">
+                <span class="btn-icon">✅</span>
+                <span class="btn-text">明白了</span>
             </button>
         </div>
     </div>

@@ -262,6 +262,7 @@ class MiniRTS {
         // UI事件
         document.getElementById('startBtn').addEventListener('click', () => this.startGame());
         document.getElementById('restartBtn').addEventListener('click', () => this.restart());
+        document.getElementById('helpBtn').addEventListener('click', () => this.showHelp());
         document.getElementById('connectingOverlay')?.classList.remove('hidden');
 
         // 建造按钮
@@ -553,6 +554,10 @@ class MiniRTS {
     showOfflineMode() {
         this.addFloatingText('连接失败，进入离线模式', '#ed8936');
         this.enableOfflineMode();
+    }
+
+    showHelp() {
+        document.getElementById('helpModal').classList.remove('hidden');
     }
 
     isConnected() {
