@@ -324,55 +324,61 @@ body {
         gap: 6px;
     }
 
+    /* 超紧凑移动端布局 */
     .top-bar {
         flex-wrap: nowrap;
-        gap: 6px;
-        padding: 6px 10px;
-        min-height: 44px;
-        max-height: 52px;
+        gap: 4px;
+        padding: 4px 8px;
+        min-height: 40px;
+        max-height: 48px;
     }
 
     .player-info {
         flex-direction: row;
         align-items: center;
-        gap: 6px;
+        gap: 4px;
         flex: 1;
         min-width: 0;
         overflow: hidden;
     }
 
     #playerId {
-        font-size: 0.7em;
-        padding: 2px 5px;
+        font-size: 0.65em;
+        padding: 1px 4px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        max-width: 60px;
+        max-width: 50px;
+        display: none; /* 极小屏幕隐藏玩家ID */
     }
 
     .resources {
-        gap: 5px;
+        gap: 4px;
         flex-shrink: 0;
     }
 
     .resources span {
         flex: 0 1 auto;
-        padding: 3px 6px;
-        font-size: 0.8em;
+        padding: 2px 5px;
+        font-size: 0.75em;
         white-space: nowrap;
+    }
+
+    .resources .icon {
+        font-size: 0.9em;
     }
 
     .status-area {
         display: flex;
         align-items: center;
-        gap: 6px;
+        gap: 4px;
         flex-shrink: 0;
     }
 
     #startBtn {
-        padding: 5px 10px;
-        font-size: 0.8em;
-        min-width: 70px;
+        padding: 4px 8px;
+        font-size: 0.75em;
+        min-width: 60px;
         transition: all 0.15s ease;
     }
 
@@ -388,6 +394,27 @@ body {
     @keyframes buttonPulse {
         0%, 100% { transform: scale(1); }
         50% { transform: scale(1.08); }
+    }
+
+    #helpBtn {
+        padding: 4px 8px;
+        min-width: 44px;
+        min-height: 36px;
+    }
+
+    #helpBtn .btn-icon {
+        font-size: 1.2em;
+    }
+
+    #helpBtn .btn-text {
+        display: none; /* 隐藏"玩法"文字，只留图标 */
+    }
+
+    .status .text {
+        font-size: 0.7em;
+        max-width: 40px;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .game-area {
@@ -411,30 +438,35 @@ body {
 
     .bottom-panel {
         flex-direction: row;
-        gap: 3px;
-        min-height: 85px; /* 进一步减小 */
-        max-height: 95px;
+        gap: 2px;
+        min-height: 80px; /* 进一步减小 */
+        max-height: 90px;
         flex-shrink: 0;
     }
 
     .buildings, .units {
         flex: 1;
-        justify-content: center;
+        justify-content: flex-start; /* 左对齐，支持滚动 */
         align-items: center;
-        padding: 5px;
-        min-height: 75px;
-        max-height: 90px;
+        padding: 4px;
+        min-height: 70px;
+        max-height: 85px;
         overflow-x: auto; /* 允许横向滚动 */
         overflow-y: hidden;
         -webkit-overflow-scrolling: touch;
+        scrollbar-width: none; /* Firefox隐藏滚动条 */
+    }
+
+    .buildings::-webkit-scrollbar, .units::-webkit-scrollbar {
+        display: none; /* Chrome/Safari隐藏滚动条 */
     }
 
     .buildings .btn, .units .btn {
-        min-width: 44px;
-        min-height: 44px;
-        padding: 3px 5px;
-        font-size: 0.64em;
-        border-radius: 5px;
+        min-width: 40px;
+        min-height: 40px;
+        padding: 2px 4px;
+        font-size: 0.6em;
+        border-radius: 4px;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -444,13 +476,12 @@ body {
     }
 
     .buildings .btn::before, .units .btn::before {
-        font-size: 1.1em;
+        font-size: 1em;
         margin-bottom: 0;
     }
 
     .buildings .btn::after, .units .btn::after {
-        font-size: 0.5em;
-        display: none; /* 移动端隐藏成本文字，节省空间 */
+        display: none; /* 移动端隐藏成本文字 */
     }
 
     .btn.selected {
@@ -460,7 +491,22 @@ body {
 
     /* 移动端面板标题 */
     .panel-title {
-        display: none; /* 移动端隐藏面板标题，节省空间 */
+        display: none; /* 移动端隐藏面板标题 */
+    }
+
+    /* 按钮组横向排列 */
+    .button-group {
+        display: flex;
+        flex-direction: row;
+        gap: 4px;
+        width: 100%;
+        justify-content: flex-start;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .button-group::-webkit-scrollbar {
+        display: none;
     }
 
     /* 移动端触摸优化 */
