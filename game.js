@@ -20,6 +20,7 @@ class OfflineGame {
     initBase() {
         const x = 400;
         const y = 400;
+        this.basePos = { x, y }; // 保存基地位置用于相机聚焦
         this.buildings.push({
             id: 'base-1', type: 'base', playerId: 'offline',
             x, y, health: 2000, maxHealth: 2000
@@ -533,13 +534,18 @@ class MiniRTS {
     enableOfflineMode() {
         console.log('🎮 启用离线单人模式');
         this.isOffline = true;
-        this.isOffline = true;
         this.offlineGame = new OfflineGame();
         this.gameState = 'lobby';
         this.updateStatus('offline');
         document.getElementById('connectingOverlay')?.classList.add('hidden');
         document.getElementById('offlineNotice')?.classList.add('hidden');
         this.addFloatingText('离线模式：单人游戏', '#ed8936');
+
+        // 自动聚焦相机到基地
+        if (this.offlineGame.basePos) {
+            this.focusCamera(this.offlineGame.basePos.x, this.offlineGame.basePos.y);
+        }
+
         this.updateUI();
     }
 
@@ -630,6 +636,19 @@ class MiniRTS {
             x: (e.clientX - rect.left - this.camera.x) / this.camera.zoom,
             y: (e.clientY - rect.top - this.camera.y) / this.camera.zoom
         };
+    }
+
+    focusCamera(worldX, worldY) {
+        // 计算目标相机位置，使世界坐标位于屏幕中心
+        const width = this.canvas.width / (window.devicePixelRatio || 1);
+        const height = this.canvas.height / (window.devicePixelRatio || 1);
+        this.camera.targetX = worldX - width / 2;
+        this.camera.targetY = worldY - height / 2;
+        // 立即应用，不使用平滑过渡
+        this.camera.x = this.camera.targetX;
+        this.camera.y = this.camera.targetY;
+        // 限制在地图范围内
+        this.updateCamera();
     }
 
     onClick(e) {
