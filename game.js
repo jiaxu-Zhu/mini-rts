@@ -570,6 +570,11 @@ class MiniRTS {
     }
 
     startGame() {
+        const startBtn = document.getElementById('startBtn');
+        // 添加点击反馈动画
+        startBtn.classList.add('pulse');
+        setTimeout(() => startBtn.classList.remove('pulse'), 500);
+
         if (this.isOffline) {
             this.offlineGame.started = true;
             this.gameState = 'playing';
