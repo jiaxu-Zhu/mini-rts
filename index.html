@@ -107,6 +107,22 @@
         <p>正在连接服务器...</p>
     </div>
 
+    <!-- 离线提示 -->
+    <div id="offlineNotice" class="offline-notice hidden">
+        <div class="offline-content">
+            <div class="offline-icon">⚠️</div>
+            <h3>离线模式</h3>
+            <p>无法连接到游戏服务器</p>
+            <p class="offline-hint">请检查：</p>
+            <ul>
+                <li>后端服务是否已启动</li>
+                <li>网络连接是否正常</li>
+                <li>SERVER_URL 配置是否正确</li>
+            </ul>
+            <button class="btn btn-primary" onclick="location.reload()">重新连接</button>
+        </div>
+    </div>
+
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <script src="game.js"></script>
 </body>

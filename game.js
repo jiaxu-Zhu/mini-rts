@@ -150,43 +150,75 @@ class MiniRTS {
     }
 
     connect() {
-        this.socket = io(SERVER_URL || undefined, {
-            transports: ['websocket', 'polling'],
-            reconnection: true,
-            reconnectionAttempts: 5
-        });
+        try {
+            this.socket = io(SERVER_URL || undefined, {
+                transports: ['websocket', 'polling'],
+                reconnection: true,
+                reconnectionAttempts: 10,
+                reconnectionDelay: 1000,
+                reconnectionDelayMax: 5000,
+                timeout: 10000
+            });
 
-        this.socket.on('connect', () => {
-            this.playerId = this.socket.id;
-            document.getElementById('playerId').textContent = this.playerId.substring(0, 8);
-            this.updateStatus('connected');
-            document.getElementById('connectingOverlay')?.classList.add('hidden');
-        });
+            this.socket.on('connect', () => {
+                console.log('✅ 已连接到服务器');
+                this.playerId = this.socket.id;
+                document.getElementById('playerId').textContent = this.playerId.substring(0, 8);
+                this.updateStatus('connected');
+                document.getElementById('connectingOverlay')?.classList.add('hidden');
+                document.getElementById('offlineNotice')?.classList.add('hidden');
+                this.addFloatingText('已连接服务器', '#48bb78');
+            });
 
-        this.socket.on('disconnect', () => {
+            this.socket.on('disconnect', (reason) => {
+                console.log('❌ 连接断开:', reason);
+                this.updateStatus('disconnected');
+                document.getElementById('connectingOverlay')?.classList.remove('hidden');
+                this.addFloatingText('连接断开，正在重连...', '#ed8936');
+            });
+
+            this.socket.on('connect_error', (error) => {
+                console.error('❌ 连接错误:', error);
+                this.updateStatus('disconnected');
+                document.getElementById('connectingOverlay')?.classList.remove('hidden');
+                this.addFloatingText('连接失败，请检查服务器', '#f56565');
+            });
+
+            this.socket.on('state', (state) => {
+                this.resources = state.resources || this.resources;
+                this.buildings = state.buildings || [];
+                this.units = state.units || [];
+                this.resourceSpots = state.resources || [];
+                this.updateUI();
+            });
+
+            this.socket.on('gameOver', (data) => {
+                if (data.winner === this.playerId) {
+                    this.showGameOver(true);
+                } else {
+                    this.showGameOver(false);
+                }
+            });
+
+            this.socket.on('playerJoined', (data) => {
+                this.addFloatingText('玩家加入', '#667eea');
+            });
+
+            // 设置连接超时
+            setTimeout(() => {
+                if (!this.playerId) {
+                    this.updateStatus('disconnected');
+                    document.getElementById('connectingOverlay')?.classList.remove('hidden');
+                    this.addFloatingText('连接超时，请稍后重试', '#f56565');
+                }
+            }, 15000);
+
+        } catch (error) {
+            console.error('❌ Socket 初始化失败:', error);
             this.updateStatus('disconnected');
             document.getElementById('connectingOverlay')?.classList.remove('hidden');
-        });
-
-        this.socket.on('state', (state) => {
-            this.resources = state.resources || this.resources;
-            this.buildings = state.buildings || [];
-            this.units = state.units || [];
-            this.resourceSpots = state.resources || [];
-            this.updateUI();
-        });
-
-        this.socket.on('gameOver', (data) => {
-            if (data.winner === this.playerId) {
-                this.showGameOver(true);
-            } else {
-                this.showGameOver(false);
-            }
-        });
-
-        this.socket.on('playerJoined', (data) => {
-            this.addFloatingText('玩家加入', '#667eea');
-        });
+            this.addFloatingText('初始化失败，刷新页面重试', '#f56565');
+        }
     }
 
     updateStatus(status) {
@@ -204,13 +236,18 @@ class MiniRTS {
     }
 
     startGame() {
-        if (!this.playerId) {
-            alert('等待连接服务器...');
+        if (!this.playerId || !this.socket?.connected) {
+            this.showOfflineMode();
             return;
         }
         this.gameState = 'playing';
-        this.socket.emit('start');
-        this.addFloatingText('游戏开始！', '#48bb78');
+        this.socket.emit('start', (response) => {
+            if (response?.error) {
+                this.addFloatingText(response.error, '#f56565');
+            } else {
+                this.addFloatingText('游戏开始！', '#48bb78');
+            }
+        });
     }
 
     restart() {
@@ -218,10 +255,37 @@ class MiniRTS {
         this.selectedUnits = [];
         this.buildType = null;
         this.trainType = null;
-        this.socket.emit('restart');
+        if (this.socket?.connected) {
+            this.socket.emit('restart');
+        }
         this.hideGameOver();
         this.updateButtons();
         this.updateSelectedButtons();
+    }
+
+    showOfflineMode() {
+        this.addFloatingText('离线模式：无法连接服务器', '#ed8936');
+        this.gameState = 'offline';
+        // 显示离线提示弹窗
+        document.getElementById('offlineNotice')?.classList.remove('hidden');
+        // 显示提示信息
+        setTimeout(() => {
+            this.addFloatingText('请检查后端是否已部署', '#f56565');
+        }, 2000);
+    }
+
+    isConnected() {
+        return this.socket && this.socket.connected;
+    }
+
+    safeEmit(event, data, callback) {
+        if (this.isConnected()) {
+            this.socket.emit(event, data, callback);
+            return true;
+        } else {
+            this.addFloatingText('未连接到服务器', '#f56565');
+            return false;
+        }
     }
 
     getWorldPos(e) {
@@ -238,25 +302,27 @@ class MiniRTS {
         const pos = this.getWorldPos(e);
 
         if (this.buildType) {
-            this.socket.emit('build', { type: this.buildType, x: pos.x, y: pos.y });
-            this.createParticles(pos.x, pos.y, '#667eea', 5);
-            this.buildType = null;
-            this.updateButtons();
-            this.updateSelectedButtons();
+            if (this.safeEmit('build', { type: this.buildType, x: pos.x, y: pos.y })) {
+                this.createParticles(pos.x, pos.y, '#667eea', 5);
+                this.buildType = null;
+                this.updateButtons();
+                this.updateSelectedButtons();
+            }
         } else if (this.trainType) {
             const barracks = this.buildings.find(b => b.type === 'barracks' && b.playerId === this.playerId);
             if (barracks) {
-                this.socket.emit('train', { type: this.trainType, buildingId: barracks.id });
-                this.createParticles(barracks.x, barracks.y, '#48bb78', 8);
-                this.trainType = null;
-                this.updateButtons();
-                this.updateSelectedButtons();
+                if (this.safeEmit('train', { type: this.trainType, buildingId: barracks.id })) {
+                    this.createParticles(barracks.x, barracks.y, '#48bb78', 8);
+                    this.trainType = null;
+                    this.updateButtons();
+                    this.updateSelectedButtons();
+                }
             } else {
                 this.addFloatingText('需要兵营', '#f56565', pos.x, pos.y);
             }
         } else {
             // 选择单位
-            this.socket.emit('select', { x: pos.x, y: pos.y, radius: 25 });
+            this.safeEmit('select', { x: pos.x, y: pos.y, radius: 25 });
         }
     }
 
@@ -264,7 +330,7 @@ class MiniRTS {
         if (this.gameState !== 'playing') return;
         const pos = this.getWorldPos(e);
         // 双击快速移动到位置
-        this.socket.emit('move', { x: pos.x, y: pos.y });
+        this.safeEmit('move', { x: pos.x, y: pos.y });
     }
 
     onMouseDown(e) {
@@ -276,7 +342,7 @@ class MiniRTS {
         } else if (e.button === 2) { // 右键移动/攻击
             const pos = this.getWorldPos(e);
             if (this.selectedUnits.length > 0) {
-                this.socket.emit('move', { x: pos.x, y: pos.y });
+                this.safeEmit('move', { x: pos.x, y: pos.y });
                 this.createParticles(pos.x, pos.y, '#fff', 3);
             }
         }
