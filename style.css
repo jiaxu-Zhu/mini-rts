@@ -779,6 +779,16 @@ body {
     background: linear-gradient(135deg, var(--primary-dark) 0%, #4c51bf 100%);
 }
 
+.btn-secondary {
+    background: linear-gradient(135deg, var(--bg-card) 0%, #4a5568 100%);
+    border: 1px solid var(--border);
+}
+
+.btn-secondary:hover:not(:disabled) {
+    background: linear-gradient(135deg, #4a5568 0%, #718096 100%);
+    border-color: var(--primary);
+}
+
 /* 玩家徽章 */
 .player-badge {
     display: flex;
