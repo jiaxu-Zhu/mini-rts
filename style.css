@@ -585,10 +585,39 @@ body {
         max-width: 50px;
     }
 
-    .buildings .btn::before, .units .btn::before,
+    /* 移动端使用伪元素显示图标和成本（更简洁） */
+    .buildings .btn::before, .units .btn::before {
+        display: block;
+        font-size: 1.4em;
+        margin-bottom: 2px;
+    }
+
     .buildings .btn::after, .units .btn::after {
-        display: none !important;
-        content: none !important;
+        display: block;
+        font-size: 0.6em;
+        color: var(--text-muted);
+        font-family: monospace;
+        white-space: nowrap;
+    }
+
+    .buildings .btn[data-type="barracks"]::before { content: "🏚️"; }
+    .buildings .btn[data-type="gold-mine"]::before { content: "⛏️"; }
+    .buildings .btn[data-type="lumber-camp"]::before { content: "🪓"; }
+
+    .units .btn[data-type="soldier"]::before { content: "⚔️"; }
+    .units .btn[data-type="worker"]::before { content: "👷"; }
+
+    .buildings .btn[data-type="barracks"]::after { content: "50💰 30🪵"; }
+    .buildings .btn[data-type="gold-mine"]::after { content: "20💰 40🪵"; }
+    .buildings .btn[data-type="lumber-camp"]::after { content: "30💰 20🪵"; }
+
+    .units .btn[data-type="soldier"]::after { content: "50💰 20🪵"; }
+    .units .btn[data-type="worker"]::after { content: "25💰 10🪵"; }
+
+    /* 隐藏内部元素，使用伪元素 */
+    .buildings .btn .btn-icon, .units .btn .btn-icon,
+    .buildings .btn .btn-label, .units .btn .btn-label {
+        display: none;
     }
 
     .btn.selected {
