@@ -436,24 +436,24 @@ body {
         display: none; /* 移动端隐藏提示，已移除 */
     }
 
-    /* 移动端布局重构 */
+    /* 移动端布局 - 清晰可见版 */
     .game-container {
         height: 100vh;
         height: 100dvh;
-        padding: 4px;
-        gap: 4px;
+        padding: 6px;
+        gap: 6px;
     }
 
     .top-bar {
         flex-wrap: nowrap;
-        gap: 3px;
-        padding: 3px 6px;
-        min-height: 38px;
-        max-height: 44px;
+        gap: 6px;
+        padding: 8px 12px;
+        min-height: 56px;
+        max-height: 64px;
     }
 
     .player-info {
-        gap: 3px;
+        gap: 8px;
         flex: 1;
         min-width: 0;
         overflow: hidden;
@@ -464,30 +464,32 @@ body {
     }
 
     .resources {
-        gap: 3px;
+        gap: 8px;
         flex-shrink: 0;
     }
 
     .resources span {
-        padding: 2px 4px;
-        font-size: 0.7em;
+        padding: 6px 10px;
+        font-size: 0.9em;
         white-space: nowrap;
+        border-radius: 8px;
     }
 
     .resources .icon {
-        font-size: 0.8em;
+        font-size: 1.1em;
     }
 
     .status-area {
-        gap: 3px;
+        gap: 8px;
         flex-shrink: 0;
     }
 
     #startBtn, #helpBtn {
-        padding: 3px 6px;
-        font-size: 0.7em;
-        min-width: 50px;
-        min-height: 32px;
+        padding: 8px 12px;
+        font-size: 0.9em;
+        min-width: 60px;
+        min-height: 44px;
+        border-radius: 8px;
     }
 
     #startBtn .btn-text, #helpBtn .btn-text {
@@ -495,18 +497,19 @@ body {
     }
 
     #startBtn .btn-icon, #helpBtn .btn-icon {
-        font-size: 1em;
+        font-size: 1.3em;
     }
 
     .status .text {
-        font-size: 0.65em;
-        max-width: 35px;
+        font-size: 0.85em;
+        max-width: 50px;
+        padding: 6px 10px;
     }
 
     .game-area {
         flex: 1;
-        min-height: 200px;
-        max-height: calc(100dvh - 180px);
+        min-height: 300px;
+        max-height: calc(100dvh - 220px);
     }
 
     #gameCanvas {
@@ -516,9 +519,9 @@ body {
 
     .bottom-panel {
         flex-direction: row;
-        gap: 2px;
-        min-height: 75px;
-        max-height: 85px;
+        gap: 6px;
+        min-height: 110px;
+        max-height: 130px;
         flex-shrink: 0;
     }
 
@@ -526,9 +529,9 @@ body {
         flex: 1;
         justify-content: flex-start;
         align-items: center;
-        padding: 3px;
-        min-height: 68px;
-        max-height: 78px;
+        padding: 8px;
+        min-height: 100px;
+        max-height: 120px;
         overflow-x: auto;
         overflow-y: hidden;
         -webkit-overflow-scrolling: touch;
@@ -540,34 +543,34 @@ body {
     }
 
     .buildings .btn, .units .btn {
-        min-width: 38px;
-        min-height: 38px;
-        padding: 2px 3px;
-        font-size: 0.55em;
-        border-radius: 4px;
+        min-width: 56px;
+        min-height: 56px;
+        padding: 6px 8px;
+        font-size: 0.75em;
+        border-radius: 8px;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        gap: 1px;
+        gap: 3px;
         flex-shrink: 0;
         line-height: 1;
     }
 
     .buildings .btn .btn-icon, .units .btn .btn-icon {
-        font-size: 1em;
+        font-size: 1.4em;
         line-height: 1;
         margin: 0;
         padding: 0;
     }
 
     .buildings .btn .btn-label, .units .btn .btn-label {
-        font-size: 0.55em;
-        line-height: 1.1;
+        font-size: 0.7em;
+        line-height: 1.2;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        max-width: 36px;
+        max-width: 50px;
     }
 
     .buildings .btn::before, .units .btn::before,
@@ -578,7 +581,7 @@ body {
 
     .btn.selected {
         transform: scale(1.05);
-        box-shadow: 0 0 0 2px rgba(72, 187, 120, 0.4);
+        box-shadow: 0 0 0 3px rgba(72, 187, 120, 0.4);
     }
 
     .panel-title {
@@ -588,12 +591,12 @@ body {
     .button-group {
         display: flex;
         flex-direction: row;
-        gap: 3px;
+        gap: 6px;
         width: 100%;
         justify-content: flex-start;
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
-        padding: 0 2px;
+        padding: 0 4px;
     }
 
     .button-group::-webkit-scrollbar {
@@ -608,7 +611,7 @@ body {
     }
 
     .btn:active {
-        transform: scale(0.92);
+        transform: scale(0.95);
     }
 
     /* 模态框适配 */
