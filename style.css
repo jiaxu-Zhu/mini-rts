@@ -531,7 +531,6 @@ body {
     }
 
     .buildings, .units {
-        flex: 1;
         justify-content: flex-start;
         align-items: center;
         padding: 8px;
@@ -541,6 +540,14 @@ body {
         overflow-y: hidden;
         -webkit-overflow-scrolling: touch;
         scrollbar-width: none;
+    }
+
+    .buildings {
+        flex: 3; /* 伐木场区域更宽 */
+    }
+
+    .units {
+        flex: 1; /* 士兵区域保持较窄 */
     }
 
     .buildings::-webkit-scrollbar, .units::-webkit-scrollbar {
