@@ -684,8 +684,8 @@ class MiniRTS {
         const rect = this.canvas.getBoundingClientRect();
         const dpr = window.devicePixelRatio || 1;
         return {
-            x: (e.clientX - rect.left - this.camera.x) / this.camera.zoom,
-            y: (e.clientY - rect.top - this.camera.y) / this.camera.zoom
+            x: (e.clientX - rect.left) / this.camera.zoom + this.camera.x,
+            y: (e.clientY - rect.top) / this.camera.zoom + this.camera.y
         };
     }
 
