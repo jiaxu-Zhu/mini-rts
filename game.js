@@ -260,38 +260,38 @@ class MiniRTS {
         // 连接服务器
         this.connect();
 
-        // UI事件 - 延迟绑定确保元素存在
-        setTimeout(() => {
-            const startBtn = document.getElementById('startBtn');
-            if (startBtn) {
-                startBtn.addEventListener('click', () => this.startGame());
-            } else {
-                console.warn('Start button not found');
-            }
+        // UI事件绑定 - 直接绑定，因为 init() 在 DOMContentLoaded 后执行
+        const startBtn = document.getElementById('startBtn');
+        if (startBtn) {
+            startBtn.addEventListener('click', () => this.startGame());
+            console.log('Start button bound');
+        } else {
+            console.warn('Start button not found');
+        }
 
-            const restartBtn = document.getElementById('restartBtn');
-            if (restartBtn) {
-                restartBtn.addEventListener('click', () => this.restart());
-            } else {
-                console.warn('Restart button not found');
-            }
+        const restartBtn = document.getElementById('restartBtn');
+        if (restartBtn) {
+            restartBtn.addEventListener('click', () => this.restart());
+            console.log('Restart button bound');
+        } else {
+            console.warn('Restart button not found');
+        }
 
-            const helpBtn = document.getElementById('helpBtn');
-            if (helpBtn) {
-                helpBtn.addEventListener('click', () => this.showHelp());
-                console.log('Help button bound');
-            } else {
-                console.warn('Help button not found');
-            }
+        const helpBtn = document.getElementById('helpBtn');
+        if (helpBtn) {
+            helpBtn.addEventListener('click', () => this.showHelp());
+            console.log('Help button bound');
+        } else {
+            console.warn('Help button not found');
+        }
 
-            const versionBtn = document.getElementById('versionBtn');
-            if (versionBtn) {
-                versionBtn.addEventListener('click', () => this.showVersion());
-                console.log('Version button bound');
-            } else {
-                console.warn('Version button not found');
-            }
-        }, 100);
+        const versionBtn = document.getElementById('versionBtn');
+        if (versionBtn) {
+            versionBtn.addEventListener('click', () => this.showVersion());
+            console.log('Version button bound');
+        } else {
+            console.warn('Version button not found');
+        }
 
         // 建造按钮
         document.querySelectorAll('.build').forEach(btn => {

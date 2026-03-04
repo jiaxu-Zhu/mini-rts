@@ -480,24 +480,29 @@ body {
     }
 
     .status-area {
-        gap: 8px;
+        gap: 4px;
         flex-shrink: 0;
     }
 
-    #startBtn, #helpBtn {
-        padding: 8px 12px;
-        font-size: 0.9em;
-        min-width: 60px;
-        min-height: 44px;
-        border-radius: 8px;
+    #startBtn, #helpBtn, #versionBtn {
+        padding: 6px 8px;
+        font-size: 0.8em;
+        min-width: 48px;
+        min-height: 40px;
+        border-radius: 6px;
     }
 
-    #startBtn .btn-text, #helpBtn .btn-text {
+    #startBtn .btn-text, #helpBtn .btn-text, #versionBtn .btn-text {
         display: none;
     }
 
-    #startBtn .btn-icon, #helpBtn .btn-icon {
-        font-size: 1.3em;
+    #startBtn .btn-icon, #helpBtn .btn-icon, #versionBtn .btn-icon {
+        font-size: 1.2em;
+    }
+
+    /* 隐藏连接状态文字，只留圆点，节省空间 */
+    .status .text {
+        display: none;
     }
 
     .status .text {
