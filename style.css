@@ -1249,3 +1249,137 @@ body {
         font-size: 0.9em;
     }
 }
+
+/* 版本信息弹窗样式 */
+.version-content {
+    max-width: 600px;
+    width: 90%;
+    max-height: 85vh;
+    overflow-y: auto;
+    text-align: left;
+    padding: 30px;
+}
+
+.version-content .modal-icon {
+    text-align: center;
+    font-size: 3rem;
+    margin-bottom: 10px;
+}
+
+.version-content h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 1.8em;
+}
+
+.version-info {
+    margin-bottom: 25px;
+}
+
+.version-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.version-label {
+    font-weight: 600;
+    color: var(--primary);
+    font-size: 1em;
+}
+
+.version-value {
+    font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+    color: var(--text-light);
+    font-size: 0.95em;
+}
+
+.version-changes {
+    margin-top: 15px;
+}
+
+.version-changes h3 {
+    color: var(--primary);
+    font-size: 1.1em;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+}
+
+#versionChanges {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#versionChanges li {
+    padding: 8px 0;
+    padding-left: 20px;
+    position: relative;
+    line-height: 1.5;
+    color: var(--text-muted);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+#versionChanges li:last-child {
+    border-bottom: none;
+}
+
+#versionChanges li::before {
+    content: "•";
+    color: var(--success);
+    position: absolute;
+    left: 8px;
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+.version-content .btn-large {
+    width: 100%;
+    margin-top: 15px;
+}
+
+/* 移动端版本弹窗适配 */
+@media (max-width: 768px) {
+    .version-content {
+        padding: 20px;
+        margin: 15px;
+        max-height: 90vh;
+    }
+
+    .version-content .modal-icon {
+        font-size: 2.5rem;
+    }
+
+    .version-content h2 {
+        font-size: 1.5em;
+        margin-bottom: 20px;
+    }
+
+    .version-item {
+        padding: 10px 12px;
+        margin-bottom: 8px;
+    }
+
+    .version-label {
+        font-size: 0.9em;
+    }
+
+    .version-value {
+        font-size: 0.85em;
+    }
+
+    .version-changes h3 {
+        font-size: 1em;
+    }
+
+    #versionChanges li {
+        padding: 6px 0;
+        padding-left: 18px;
+        font-size: 0.85em;
+    }
+}

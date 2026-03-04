@@ -40,6 +40,10 @@
                     <span class="btn-icon">▶️</span>
                     <span class="btn-text">开始游戏</span>
                 </button>
+                <button id="versionBtn" class="btn btn-secondary" title="版本信息">
+                    <span class="btn-icon">📋</span>
+                    <span class="btn-text">版本</span>
+                </button>
                 <button id="helpBtn" class="btn btn-secondary" title="游戏玩法">
                     <span class="btn-icon">❓</span>
                     <span class="btn-text">玩法</span>
@@ -96,6 +100,34 @@
             <button id="restartBtn" class="btn btn-primary btn-large">
                 <span class="btn-icon">🔄</span>
                 <span class="btn-text">再来一局</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- 版本信息弹窗 -->
+    <div id="versionModal" class="modal hidden" role="dialog" aria-modal="true">
+        <div class="modal-content version-content">
+            <div class="modal-icon">📋</div>
+            <h2>版本信息</h2>
+            <div class="version-info">
+                <div class="version-item">
+                    <span class="version-label">版本号：</span>
+                    <span class="version-value" id="versionNumber">--</span>
+                </div>
+                <div class="version-item">
+                    <span class="version-label">更新时间：</span>
+                    <span class="version-value" id="versionDate">--</span>
+                </div>
+                <div class="version-changes">
+                    <h3>📝 版本更新内容</h3>
+                    <ul id="versionChanges">
+                        <!-- 动态填充 -->
+                    </ul>
+                </div>
+            </div>
+            <button class="btn btn-primary btn-large" onclick="document.getElementById('versionModal').classList.add('hidden')">
+                <span class="btn-icon">✅</span>
+                <span class="btn-text">知道了</span>
             </button>
         </div>
     </div>

@@ -283,6 +283,14 @@ class MiniRTS {
             } else {
                 console.warn('Help button not found');
             }
+
+            const versionBtn = document.getElementById('versionBtn');
+            if (versionBtn) {
+                versionBtn.addEventListener('click', () => this.showVersion());
+                console.log('Version button bound');
+            } else {
+                console.warn('Version button not found');
+            }
         }, 100);
 
         // 建造按钮
@@ -618,6 +626,44 @@ class MiniRTS {
 
     showHelp() {
         document.getElementById('helpModal').classList.remove('hidden');
+    }
+
+    showVersion() {
+        // 版本信息（从 git 历史自动生成）
+        const versionInfo = this.getVersionInfo();
+
+        document.getElementById('versionNumber').textContent = versionInfo.version;
+        document.getElementById('versionDate').textContent = versionInfo.date;
+
+        const changesList = document.getElementById('versionChanges');
+        changesList.innerHTML = versionInfo.changes.map(change =>
+            `<li>${change}</li>`
+        ).join('');
+
+        document.getElementById('versionModal').classList.remove('hidden');
+    }
+
+    getVersionInfo() {
+        // 从 git 历史获取版本信息
+        // 这里使用硬编码的版本信息，也可以从后端或文件读取
+        return {
+            version: 'v1.0.0-20260304',
+            date: '2026-03-04',
+            changes: [
+                '全面重构移动端布局，解决图标重叠和显示问题',
+                '增大移动端UI尺寸，确保清晰可见（顶部56-64px，底部110-130px）',
+                '优化按钮尺寸：56×56px，图标1.4em，文字0.7em',
+                '移除伪元素，使用内部元素避免重复',
+                '支持横向滚动（按钮过多时）',
+                '隐藏非必要元素（玩家ID、成本文字等）',
+                '添加版本信息按钮，点击查看版本号和更新内容',
+                '优化触摸反馈：按钮点击缩放0.95',
+                '修复手机端自动聚焦相机到基地',
+                '完善离线模式：完整游戏逻辑，资源自动增长',
+                '添加攻击功能：双击/长按敌人攻击',
+                '添加教程系统：右上角❓按钮，完整游戏说明'
+            ]
+        };
     }
 
     isConnected() {
