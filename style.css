@@ -440,20 +440,20 @@ body {
     .game-container {
         height: 100vh;
         height: 100dvh;
-        padding: 6px;
-        gap: 6px;
+        padding: 8px;
+        gap: 8px;
     }
 
     .top-bar {
         flex-wrap: nowrap;
-        gap: 6px;
-        padding: 8px 12px;
-        min-height: 56px;
-        max-height: 64px;
+        gap: 8px;
+        padding: 10px 14px;
+        min-height: 64px;
+        max-height: 72px;
     }
 
     .player-info {
-        gap: 8px;
+        gap: 10px;
         flex: 1;
         min-width: 0;
         overflow: hidden;
@@ -464,32 +464,32 @@ body {
     }
 
     .resources {
-        gap: 8px;
+        gap: 10px;
         flex-shrink: 0;
     }
 
     .resources span {
-        padding: 6px 10px;
-        font-size: 0.9em;
+        padding: 8px 12px;
+        font-size: 1em;
         white-space: nowrap;
-        border-radius: 8px;
+        border-radius: 10px;
     }
 
     .resources .icon {
-        font-size: 1.1em;
+        font-size: 1.2em;
     }
 
     .status-area {
-        gap: 4px;
+        gap: 6px;
         flex-shrink: 0;
     }
 
     #startBtn, #helpBtn, #versionBtn {
-        padding: 6px 8px;
-        font-size: 0.8em;
-        min-width: 48px;
-        min-height: 40px;
-        border-radius: 6px;
+        padding: 8px 10px;
+        font-size: 0.85em;
+        min-width: 56px;
+        min-height: 48px;
+        border-radius: 8px;
     }
 
     #startBtn .btn-text, #helpBtn .btn-text, #versionBtn .btn-text {
@@ -497,7 +497,7 @@ body {
     }
 
     #startBtn .btn-icon, #helpBtn .btn-icon, #versionBtn .btn-icon {
-        font-size: 1.2em;
+        font-size: 1.4em;
     }
 
     /* 隐藏连接状态文字，只留圆点，节省空间 */
@@ -506,15 +506,15 @@ body {
     }
 
     .status .text {
-        font-size: 0.85em;
-        max-width: 50px;
-        padding: 6px 10px;
+        font-size: 0.9em;
+        max-width: 60px;
+        padding: 8px 12px;
     }
 
     .game-area {
         flex: 1;
-        min-height: 300px;
-        max-height: calc(100dvh - 220px);
+        min-height: 320px;
+        max-height: calc(100dvh - 240px);
     }
 
     #gameCanvas {
@@ -524,18 +524,18 @@ body {
 
     .bottom-panel {
         flex-direction: row;
-        gap: 6px;
-        min-height: 110px;
-        max-height: 130px;
+        gap: 8px;
+        min-height: 130px;
+        max-height: 150px;
         flex-shrink: 0;
     }
 
     .buildings, .units {
         justify-content: flex-start;
         align-items: center;
-        padding: 8px;
-        min-height: 100px;
-        max-height: 120px;
+        padding: 10px;
+        min-height: 120px;
+        max-height: 140px;
         overflow-x: auto;
         overflow-y: hidden;
         -webkit-overflow-scrolling: touch;
@@ -555,46 +555,46 @@ body {
     }
 
     .buildings .btn, .units .btn {
-        min-width: 56px;
-        min-height: 56px;
-        padding: 6px 8px;
-        font-size: 0.75em;
-        border-radius: 8px;
+        min-width: 70px;
+        min-height: 70px;
+        padding: 8px 10px;
+        font-size: 0.85em;
+        border-radius: 10px;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        gap: 3px;
+        gap: 4px;
         flex-shrink: 0;
         line-height: 1;
     }
 
     .buildings .btn .btn-icon, .units .btn .btn-icon {
-        font-size: 1.4em;
+        font-size: 1.6em;
         line-height: 1;
         margin: 0;
         padding: 0;
     }
 
     .buildings .btn .btn-label, .units .btn .btn-label {
-        font-size: 0.7em;
+        font-size: 0.8em;
         line-height: 1.2;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        max-width: 50px;
+        max-width: 60px;
     }
 
     /* 移动端使用伪元素显示图标和成本（更简洁） */
     .buildings .btn::before, .units .btn::before {
         display: block;
-        font-size: 1.4em;
-        margin-bottom: 2px;
+        font-size: 1.6em;
+        margin-bottom: 3px;
     }
 
     .buildings .btn::after, .units .btn::after {
         display: block;
-        font-size: 0.6em;
+        font-size: 0.7em;
         color: var(--text-muted);
         font-family: monospace;
         white-space: nowrap;
@@ -632,7 +632,7 @@ body {
     .button-group {
         display: flex;
         flex-direction: row;
-        gap: 6px;
+        gap: 8px;
         width: 100%;
         justify-content: flex-start;
         overflow-x: auto;
@@ -647,111 +647,111 @@ body {
     /* 触摸优化 */
     .btn {
         -webkit-tap-highlight-color: transparent;
-        transition: transform 0.1s, box-shadow 0.1s;
+        transition: transform 0.15s, box-shadow 0.15s;
         touch-action: manipulation;
     }
 
     .btn:active {
-        transform: scale(0.95);
+        transform: scale(0.93);
     }
 
     /* 模态框适配 */
     .modal-content {
-        margin: 10px;
-        padding: 1.5rem;
-        width: calc(100% - 20px);
+        margin: 15px;
+        padding: 2rem;
+        width: calc(100% - 30px);
         max-width: none;
     }
 
     .modal-icon {
-        font-size: 3rem;
+        font-size: 3.5rem;
     }
 
     #gameOverTitle {
-        font-size: 1.3rem;
+        font-size: 1.5rem;
     }
 
     .btn-large {
-        padding: 0.8rem 1.5rem;
-        font-size: 0.9rem;
-        min-width: 120px;
+        padding: 1rem 2rem;
+        font-size: 1rem;
+        min-width: 140px;
     }
 
     /* 离线提示 */
     .offline-content {
-        margin: 10px;
-        padding: 1.5rem;
-        width: calc(100% - 20px);
+        margin: 15px;
+        padding: 2rem;
+        width: calc(100% - 30px);
     }
 
     .offline-icon {
-        font-size: 3rem;
-        margin-bottom: 15px;
+        font-size: 3.5rem;
+        margin-bottom: 18px;
     }
 
     .offline-content h3 {
-        font-size: 1.5rem;
-        margin-bottom: 12px;
+        font-size: 1.6rem;
+        margin-bottom: 15px;
     }
 
     .offline-content p {
-        font-size: 0.9rem;
-        margin-bottom: 8px;
+        font-size: 1rem;
+        margin-bottom: 10px;
     }
 
     .offline-content ul {
-        font-size: 0.85rem;
-        margin: 12px auto;
-        max-width: 220px;
+        font-size: 0.9rem;
+        margin: 15px auto;
+        max-width: 260px;
     }
 
     /* 玩法弹窗 */
     .help-content {
-        padding: 15px;
-        margin: 10px;
+        padding: 20px;
+        margin: 15px;
         max-height: 90vh;
     }
 
     .help-content .modal-icon {
-        font-size: 2rem;
-        margin-bottom: 8px;
-    }
-
-    .help-content h2 {
-        font-size: 1.3rem;
-        margin-bottom: 15px;
-    }
-
-    .help-section {
-        padding: 10px;
+        font-size: 2.5rem;
         margin-bottom: 12px;
     }
 
+    .help-content h2 {
+        font-size: 1.5rem;
+        margin-bottom: 18px;
+    }
+
+    .help-section {
+        padding: 12px;
+        margin-bottom: 15px;
+    }
+
     .help-section h3 {
-        font-size: 0.95rem;
-        margin-bottom: 8px;
+        font-size: 1.05rem;
+        margin-bottom: 10px;
     }
 
     .help-section p, .help-section li {
-        font-size: 0.85rem;
-        line-height: 1.5;
+        font-size: 0.9rem;
+        line-height: 1.6;
     }
 
     .help-section li {
-        padding: 4px 0;
-        padding-left: 16px;
+        padding: 5px 0;
+        padding-left: 18px;
     }
 
     /* 连接中遮罩 */
     .connecting-overlay p {
-        font-size: 1rem;
+        font-size: 1.1rem;
     }
 
     .spinner {
-        width: 40px;
-        height: 40px;
-        border-width: 3px;
-        margin-bottom: 15px;
+        width: 48px;
+        height: 48px;
+        border-width: 4px;
+        margin-bottom: 18px;
     }
 }
 
@@ -806,8 +806,8 @@ body {
 /* 触摸设备特定优化 */
 @media (hover: none) and (pointer: coarse) {
     .btn {
-        min-height: 60px;
-        min-width: 70px;
+        min-height: 70px;
+        min-width: 80px;
     }
 
     .game-tips {
@@ -815,35 +815,47 @@ body {
     }
 
     .top-bar {
-        padding: 8px 12px;
+        padding: 10px 14px;
     }
 
     .resources span {
-        padding: 5px 8px;
-        font-size: 0.85em;
+        padding: 8px 12px;
+        font-size: 0.95em;
     }
 
     .buildings .btn, .units .btn {
-        min-width: 60px;
-        min-height: 60px;
-        padding: 6px 8px;
+        min-width: 70px;
+        min-height: 70px;
+        padding: 8px 10px;
     }
 
     .buildings .btn::before, .units .btn::before {
-        font-size: 1.4em;
+        font-size: 1.6em;
     }
 
     .buildings .btn::after, .units .btn::after {
-        font-size: 0.6em;
+        font-size: 0.7em;
     }
 
     .bottom-panel {
-        min-height: 110px;
+        min-height: 130px;
+        max-height: 150px;
     }
 }
 
 /* 小屏手机优化 */
 @media (max-width: 480px) {
+    .game-container {
+        padding: 6px;
+        gap: 6px;
+    }
+
+    .top-bar {
+        padding: 8px 10px;
+        min-height: 56px;
+        max-height: 64px;
+    }
+
     .player-info {
         gap: 6px;
     }
@@ -853,35 +865,43 @@ body {
     }
 
     .resources span {
-        padding: 4px 6px;
-        font-size: 0.8em;
-    }
-
-    .status-area {
-        gap: 8px;
-    }
-
-    #startBtn {
-        padding: 6px 12px;
+        padding: 6px 8px;
         font-size: 0.85em;
     }
 
+    .status-area {
+        gap: 6px;
+    }
+
+    #startBtn, #helpBtn, #versionBtn {
+        padding: 6px 8px;
+        min-width: 48px;
+        min-height: 42px;
+    }
+
     .buildings .btn, .units .btn {
-        min-width: 55px;
-        min-height: 55px;
-        padding: 5px 6px;
+        min-width: 65px;
+        min-height: 65px;
+        padding: 6px 8px;
     }
 
     .buildings .btn::before, .units .btn::before {
-        font-size: 1.3em;
+        font-size: 1.5em;
     }
 
     .buildings .btn::after, .units .btn::after {
-        font-size: 0.55em;
+        font-size: 0.65em;
     }
 
     .bottom-panel {
-        min-height: 100px;
+        min-height: 115px;
+        max-height: 135px;
+    }
+
+    .buildings, .units {
+        min-height: 105px;
+        max-height: 125px;
+        padding: 8px;
     }
 
     .panel-title {
